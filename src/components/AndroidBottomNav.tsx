@@ -7,19 +7,21 @@ interface AndroidBottomNavProps {
   activeTab: TabType;
   onTabChange: (tab: TabType) => void;
   isPlayingAudio?: boolean;
+  totalDocsCount?: number;
 }
 
 export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
   activeTab,
   onTabChange,
   isPlayingAudio = false,
+  totalDocsCount = 33,
 }) => {
   const tabs = [
     {
       id: 'library' as TabType,
       label: 'Library',
       icon: BookOpen,
-      badge: '22',
+      badge: String(totalDocsCount),
     },
     {
       id: 'quickref' as TabType,

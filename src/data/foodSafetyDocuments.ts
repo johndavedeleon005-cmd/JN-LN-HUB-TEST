@@ -1,6 +1,7 @@
 import { FoodSafetyDoc } from '../types/foodSafety';
+import { ALL_SOP_DOCUMENTS } from './sopDocuments';
 
-export const INITIAL_FOOD_SAFETY_DOCUMENTS: FoodSafetyDoc[] = [
+const POLICIES: FoodSafetyDoc[] = [
   {
     id: 'ikqap-001',
     code: 'IKQAP#001',
@@ -1925,155 +1926,10 @@ export const INITIAL_FOOD_SAFETY_DOCUMENTS: FoodSafetyDoc[] = [
       { rev: 0, date: 'July 24, 2026', author: 'Celine Joy Sanchez', purpose: 'Originator' },
     ],
     tags: ['Warehousing', 'GWP', 'Pallets', 'MHE', 'FEFO', 'Shatterproof'],
-  },
-  {
-    id: 'ikqa-sop-010',
-    code: 'IKQA-SOP#010',
-    title: 'Standard Operating Procedure: Cross - Contamination',
-    type: 'sop',
-    category: 'Operations & Maintenance',
-    revision: 0,
-    effectiveDate: 'June 29, 2026',
-    pdfUrl: '/assets/aistudio/IKQA-SOP_010__Cross-Contamination.docx_61777ef8.pdf',
-    summary:
-      'The comprehensive 11-page master SOP establishing hardware color-coding matrices (cutting boards, towels, meat serving plates), the 15-minute intake cold chain rule, chronological batching sequences, cooking line boundaries, and allergen segregation protocols across Warehouse, Commissary, and Stores.',
-    keyTakeaways: [
-      'Cutting Board Color Matrix:',
-      '• 🔴 Red: Raw Meat (Beef, Pork, Lamb)',
-      '• 🟡 Yellow: Raw Poultry (Chicken, Turkey, Duck)',
-      '• 🔵 Blue: Raw Seafood (Fish, Shellfish)',
-      '• 🟢 Green: Produce (Fresh Fruits & Vegetables)',
-      '• 🟤 Brown: Dairy & Cooked Foods',
-      '• ⚪ White: Allergen-Free Orders (Strictly reserved, no exceptions)',
-      'Meat Serving Plates Color Coding:',
-      '• 🔴 Red, 🟡 Yellow: Intended for US Beef',
-      '• 🟤 Brown, 🟢 Green: Intended for Pork Belly',
-      '• 🟠 Orange: Intended for Angus Beef',
-      'Chronological Batching Sequence: Shift Start = Clean Run (allergen-free, RTE items, clean vegetables); Shift End = Raw/Allergen Run (marinations, allergen items).',
-      'Cooking Line Boundary: Absolute line of demarcation. Line cooks must use entirely separate dedicated tongs & plates for raw placement vs cooked retrieval.',
-      'Hygienic Reset: 20-second 6-step wash + fresh gloves when switching tasks or food groups.',
-      'Spill Response: Cordon off area immediately, deploy color-coded spill kit, wash/rinse/sanitize before resuming.',
-    ],
-    quickRules: [
-      {
-        title: 'Cutting Board Matrix',
-        rule: '🔴 Red=Meat, 🟡 Yellow=Poultry, 🔵 Blue=Fish, 🟢 Green=Produce, 🟤 Brown=Cooked/Dairy, ⚪ White=Allergens.',
-        type: 'critical',
-      },
-      {
-        title: 'Meat Plate Colors',
-        rule: 'Red/Yellow plates = US Beef; Brown/Green = Pork Belly; Orange = Angus Beef.',
-        type: 'info',
-      },
-      {
-        title: 'Separate Grill Tongs',
-        rule: 'Never use the same tongs for raw protein placement and cooked protein retrieval.',
-        type: 'critical',
-      },
-    ],
-    sections: [
-      {
-        id: '1',
-        title: '1. Purpose & Scope',
-        content:
-          'Establishes standardized procedures for prevention, control, and absolute segregation of biological, chemical, and physical hazards, as well as major allergens, across Warehouse, Commissary, and Store levels of Imperial Kitchen Group Inc. (Pages 1-11).',
-      },
-      {
-        id: '2',
-        title: '2. Hardware Color Coding (Boards, Towels & Meat Plates)',
-        content: 'Cross-contamination is eliminated via absolute visible segregation:',
-        bulletPoints: [
-          'Cutting Boards: 🔴 Red = Raw Meat; 🟡 Yellow = Raw Poultry; 🔵 Blue = Raw Seafood; 🟢 Green = Fresh Produce; 🟤 Brown = Dairy & Cooked Foods; ⚪ White = Allergen-Free Orders Only.',
-          'Sanitation Towels: 🔵 Blue = FOH Dining; 🟡 Yellow = Handwash Sinks; 🟢 Green = BOH Kitchen; ⚪ White = Clean Wares & Plating; 🔴 Red = Restroom & Sanitation (Never enter food zone).',
-          'Meat Serving Plates: 🔴 Red & 🟡 Yellow = US Beef; 🟤 Brown & 🟢 Green = Pork Belly; 🟠 Orange = Angus Beef.',
-        ],
-      },
-      {
-        id: '3',
-        title: '3. Gateway Intake & 15-Minute Rule',
-        content:
-          'Incoming shipments checked for COAs and vehicle cleanliness. Chilled products (≤5°C) and frozen goods (≤-18°C) must be moved into deep cold storage within 15 minutes of vehicle arrival.',
-      },
-      {
-        id: '4',
-        title: '4. Chronological Batching & Hygienic Reset',
-        content: 'Production flow control:',
-        bulletPoints: [
-          'Shift Start (Clean Run): Process allergen-free products, ready-to-eat proprietary items, and clean produce first.',
-          'Shift End (Allergen/Raw Run): Schedule allergen items and raw meat marinations at the end of production cycle.',
-          'The Hygienic Reset: 20-second handwashing + fresh gloves whenever switching tasks or handling different food groups.',
-          'The Cooking Line Boundary: Separate dedicated tongs and plates for raw meat loading vs cooked food plating.',
-        ],
-      },
-      {
-        id: '5',
-        title: '5. Allergen Protocol & Zero Substitution',
-        content:
-          'White cutting board and fresh sanitized utensils strictly reserved for allergen orders. If an allergen accidentally touches a plate, you cannot wipe it away; the entire meal must be discarded and restarted from scratch.',
-      },
-    ],
-    tables: [
-      {
-        title: 'Master Cutting Board Color Coding',
-        headers: ['Board Color', 'Food Category', 'Standard Items Covered'],
-        rows: [
-          ['🔴 Red', 'Raw Meat', 'Beef, Pork, Lamb'],
-          ['🟡 Yellow', 'Raw Poultry', 'Chicken, Turkey, Duck'],
-          ['🔵 Blue', 'Raw Seafood', 'Fish and Shellfish'],
-          ['🟢 Green', 'Produce', 'Fresh Fruits and Vegetables'],
-          ['🟤 Brown', 'Dairy & Cooked Foods', 'Dairy products and pre-cooked items'],
-          ['⚪ White', 'Allergen-Free', 'Strictly for allergen-free orders (No exceptions)'],
-        ],
-      },
-      {
-        title: 'Meat Serving Plates Color Coding',
-        headers: ['Plate Color', 'Approved Usage & Target Protein'],
-        rows: [
-          ['🔴 Red & 🟡 Yellow', 'Intended for US Beef'],
-          ['🟤 Brown & 🟢 Green', 'Intended for Pork Belly'],
-          ['🟠 Orange', 'Intended for Angus Beef'],
-        ],
-      },
-      {
-        title: 'Sanitation Towel Deployment Matrix',
-        headers: ['Towel Color', 'Operational Area', 'Approved Usage & Constraints'],
-        rows: [
-          ['🔵 Blue', 'Front of House (FOH)', 'Dining areas, guest tables, service counters.'],
-          ['🟡 Yellow', 'Handwashing Stations', 'Dedicated employee hand-hygiene sinks only.'],
-          ['🟢 Green', 'Back of House (BOH)', 'General kitchen prep tables and cooking lines.'],
-          ['⚪ White', 'Kitchen Wares & Plating', 'Polishing and drying clean kitchen wares, plates, and utensils.'],
-          ['🔴 Red', 'Restroom & Sanitation', 'Comfort rooms, toilets, high-risk sanitation. NEVER enters food prep.'],
-        ],
-      },
-    ],
-    signatories: {
-      preparedBy: 'Celine Joy Sanchez (QA Specialist)',
-      reviewedBy: ['Jackquelyn Aquino (SCM)', 'Virna Joy Bernardo (L&D)', 'Anthony Co (HR)', 'Aries Tambasacan (Ops)', 'Eric Co (VP)'],
-      approvedBy: 'Jack Julius Tiu (President)',
-    },
-    changeHistory: [
-      { rev: 0, date: 'June 18, 2026', author: 'Celine Joy Sanchez', purpose: 'Originator' },
-    ],
-    quizQuestions: [
-      {
-        question: 'Under IKQA-SOP#010, which cutting board color is strictly reserved for Allergen-Free orders?',
-        options: ['Green', 'White', 'Blue', 'Yellow'],
-        answerIndex: 1,
-        explanation: 'The White cutting board is strictly reserved for allergen-free orders with zero exceptions.',
-      },
-      {
-        question: 'What meat is served on the Orange color-coded plate?',
-        options: ['Pork Belly', 'US Beef', 'Angus Beef', 'Raw Chicken'],
-        answerIndex: 2,
-        explanation: 'Orange serving plates are intended specifically for Angus Beef.',
-      },
-      {
-        question: 'Can you wipe off an allergen if it accidentally touches a guest plate?',
-        options: ['Yes, if wiped with a sanitized towel', 'No, the entire meal must be discarded and restarted from scratch', 'Yes, if reheated', 'Only if the guest agrees'],
-        answerIndex: 1,
-        explanation: 'Strict zero substitution applies: you cannot wipe away allergens. The entire meal must be discarded and remade.',
-      },
-    ],
-    tags: ['SOP', 'Cross-Contamination', 'Cutting Boards', 'Plates Color Coding', 'Towels', 'Batching'],
-  },
+  }
+];
+
+export const INITIAL_FOOD_SAFETY_DOCUMENTS: FoodSafetyDoc[] = [
+  ...POLICIES,
+  ...ALL_SOP_DOCUMENTS,
 ];

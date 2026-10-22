@@ -1,6 +1,6 @@
 import React from 'react';
 import { FoodSafetyDoc } from '../types/foodSafety';
-import { Bookmark, FileText, Headphones, ChevronRight, CheckCircle2, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { Bookmark, FileText, Headphones, ChevronRight, CheckCircle2, AlertTriangle, ShieldCheck, Lock } from 'lucide-react';
 
 interface DocumentCardProps {
   doc: FoodSafetyDoc;
@@ -137,14 +137,14 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
             <span>Listen</span>
           </button>
 
-          {/* Quick PDF Open */}
+          {/* Quick Original Doc - Locked */}
           <button
             onClick={(e) => onOpenPdf(doc, e)}
-            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-950/60 hover:bg-red-900/80 border border-red-800/50 text-red-200 transition-colors text-[11px] font-medium"
-            title="View original official PDF"
+            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/50 text-amber-300 transition-colors text-[11px] font-semibold active:scale-95 shadow-sm"
+            title="Locked: Actual document viewing is via store documents"
           >
-            <FileText className="w-3.5 h-3.5 text-red-400" />
-            <span>PDF</span>
+            <Lock className="w-3 h-3 text-amber-400" />
+            <span>Original 🔒</span>
           </button>
         </div>
       </div>

@@ -8,13 +8,14 @@ import { DocumentViewer } from './components/DocumentViewer';
 import { QuickReferenceView } from './components/QuickReferenceView';
 import { AudioReaderPanel } from './components/AudioReaderPanel';
 import { StaffQuizAudit } from './components/StaffQuizAudit';
-import { AddDocumentModal } from './components/AddDocumentModal';
 import { ComplianceAssistantModal } from './components/ComplianceAssistantModal';
 import { ComplianceAssistantView } from './components/ComplianceAssistantView';
 import { PdfViewerModal } from './components/PdfViewerModal';
+import { ConfidentialityPopup } from './components/ConfidentialityPopup';
+import { StoreDocumentLockModal } from './components/StoreDocumentLockModal';
+import { WelcomeTrainingHubModal } from './components/WelcomeTrainingHubModal';
 import {
   Search,
-  Plus,
   Bookmark,
   CheckCircle2,
   Filter,
@@ -33,7 +34,7 @@ export default function App() {
   // Documents state (persisted with any custom added docs)
   const [documents, setDocuments] = useState<FoodSafetyDoc[]>(() => {
     try {
-      const saved = localStorage.getItem('ikqa_documents_v1');
+      const saved = localStorage.getItem('ikqa_documents_v2') || localStorage.getItem('ikqa_documents_v1');
       if (saved) {
         const parsed = JSON.parse(saved);
         // Merge with initial in case of updates
@@ -79,9 +80,12 @@ export default function App() {
     }
   });
 
-  // Staff Info
+  // Staff Info: Name, Position & Branch
   const [staffName, setStaffName] = useState(() => {
-    return localStorage.getItem('ikqa_staff_name') || 'Kitchen Shift Lead';
+    return localStorage.getItem('ikqa_staff_name') || 'Maria Santos';
+  });
+  const [staffPosition, setStaffPosition] = useState(() => {
+    return localStorage.getItem('ikqa_staff_position') || 'Kitchen Shift Lead';
   });
   const [staffBranch, setStaffBranch] = useState(() => {
     return localStorage.getItem('ikqa_staff_branch') || 'Jiangnan Hotpot - SM Mall of Asia';
@@ -91,9 +95,35 @@ export default function App() {
   const [isPhoneFrame, setIsPhoneFrame] = useState(false);
 
   // Modals state
-  const [isAddDocOpen, setIsAddDocOpen] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [pdfModalDoc, setPdfModalDoc] = useState<FoodSafetyDoc | null>(null);
+
+  // Mandatory Confidentiality & Non-Disclosure Agreement Gatekeeper
+  const [hasAgreedNDA, setHasAgreedNDA] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('ld_training_hub_nda_accepted') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Welcome to Learning and Development Training Hub Pop-up from the start
+  // Must remain open until the user accepts the Confidentiality & Non-Disclosure Agreement
+  const [isWelcomeOpen, setIsWelcomeOpen] = useState<boolean>(() => {
+    try {
+      const agreed = localStorage.getItem('ld_training_hub_nda_accepted') === 'true';
+      // If not yet agreed, it must open and cannot proceed
+      return !agreed;
+    } catch {
+      return true;
+    }
+  });
+
+  // Confidentiality Agreement State (Required popup on every page viewed)
+  const [pendingDocToView, setPendingDocToView] = useState<FoodSafetyDoc | null>(null);
+  const [isConfidentialityOpen, setIsConfidentialityOpen] = useState(false);
+  const [pendingAction, setPendingAction] = useState<'viewDoc' | 'viewPdf'>('viewDoc');
+  const [storeLockDoc, setStoreLockDoc] = useState<FoodSafetyDoc | null>(null);
 
   // Persist bookmarks
   useEffect(() => {
@@ -108,8 +138,9 @@ export default function App() {
   // Persist staff profile
   useEffect(() => {
     localStorage.setItem('ikqa_staff_name', staffName);
+    localStorage.setItem('ikqa_staff_position', staffPosition);
     localStorage.setItem('ikqa_staff_branch', staffBranch);
-  }, [staffName, staffBranch]);
+  }, [staffName, staffPosition, staffBranch]);
 
   // Handlers
   const handleToggleBookmark = (id: string, e?: React.MouseEvent) => {
@@ -125,13 +156,15 @@ export default function App() {
     );
   };
 
-  const handleAddCustomDoc = (newDoc: FoodSafetyDoc) => {
-    setDocuments((prev) => {
-      const updated = [newDoc, ...prev];
-      localStorage.setItem('ikqa_documents_v1', JSON.stringify(updated));
-      return updated;
-    });
-    setSelectedDoc(newDoc);
+  const handleAgreeNDA = () => {
+    try {
+      localStorage.setItem('ld_training_hub_nda_accepted', 'true');
+      localStorage.setItem('ld_training_hub_nda_timestamp', new Date().toISOString());
+    } catch (e) {
+      console.error(e);
+    }
+    setHasAgreedNDA(true);
+    setIsWelcomeOpen(false);
   };
 
   const handleQuickTTS = (doc: FoodSafetyDoc, e: React.MouseEvent) => {
@@ -140,9 +173,34 @@ export default function App() {
     setActiveTab('audio');
   };
 
-  const handleOpenPdf = (doc: FoodSafetyDoc, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setPdfModalDoc(doc);
+  // Confidentiality Gatekeeper: Required popup on every page / document viewed
+  const handleInitiateViewDoc = (doc: FoodSafetyDoc) => {
+    setPendingDocToView(doc);
+    setPendingAction('viewDoc');
+    setIsConfidentialityOpen(true);
+  };
+
+  const handleInitiateViewPdf = (doc: FoodSafetyDoc, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    // Feature Locked: Prompt that actual document viewing is via store documents
+    setStoreLockDoc(doc);
+  };
+
+  const handleAgreeConfidentiality = () => {
+    if (pendingDocToView) {
+      if (pendingAction === 'viewDoc') {
+        setSelectedDoc(pendingDocToView);
+      } else {
+        setPdfModalDoc(pendingDocToView);
+      }
+    }
+    setIsConfidentialityOpen(false);
+    setPendingDocToView(null);
+  };
+
+  const handleCancelConfidentiality = () => {
+    setIsConfidentialityOpen(false);
+    setPendingDocToView(null);
   };
 
   // Filtered documents
@@ -214,6 +272,7 @@ export default function App() {
           isPhoneFrame={isPhoneFrame}
           togglePhoneFrame={() => setIsPhoneFrame((prev) => !prev)}
           onOpenAssistant={() => setIsAssistantOpen(true)}
+          onOpenWelcomeModal={() => setIsWelcomeOpen(true)}
         />
 
         {/* Content Body */}
@@ -228,7 +287,9 @@ export default function App() {
               isRead={readDocIds.includes(selectedDoc.id)}
               onToggleRead={handleToggleRead}
               staffName={staffName}
-              onOpenPdfModal={(d) => setPdfModalDoc(d)}
+              staffPosition={staffPosition}
+              staffBranch={staffBranch}
+              onOpenPdfModal={(d) => handleInitiateViewPdf(d)}
             />
           ) : (
             <div className="p-4 space-y-4">
@@ -244,7 +305,7 @@ export default function App() {
                           Imperial Kitchen Group Inc.
                         </span>
                         <h1 className="text-lg sm:text-xl font-black text-white tracking-tight">
-                          Food Safety & Quality Library
+                          Learning and Development Training Hub
                         </h1>
                         <p className="text-xs text-slate-300 max-w-md leading-relaxed">
                           Official compliance standards for Jiangnan Hotpot restaurants, commissaries, and logistics.
@@ -252,11 +313,11 @@ export default function App() {
                       </div>
 
                       <button
-                        onClick={() => setIsAddDocOpen(true)}
-                        className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white text-xs font-bold shadow-lg shadow-red-950/60 active:scale-95 transition-all flex-shrink-0"
+                        onClick={() => setIsWelcomeOpen(true)}
+                        className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 rounded-2xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold shadow-lg active:scale-95 transition-all flex-shrink-0"
                       >
-                        <Plus className="w-4 h-4" />
-                        <span>Upload SOP/Guide</span>
+                        <ShieldCheck className="w-4 h-4 text-amber-400" />
+                        <span>L&D Team & NDA</span>
                       </button>
                     </div>
 
@@ -345,15 +406,6 @@ export default function App() {
                     >
                       Guides ({guidesCount})
                     </button>
-
-                    {/* Add SOP / Guide button on mobile */}
-                    <button
-                      onClick={() => setIsAddDocOpen(true)}
-                      className="px-3 py-1.5 rounded-xl font-bold whitespace-nowrap bg-gradient-to-r from-red-600/30 to-amber-600/30 border border-red-500/40 text-red-300 hover:text-white transition-all flex items-center gap-1 ml-auto"
-                    >
-                      <Plus className="w-3.5 h-3.5" />
-                      <span>Add SOP</span>
-                    </button>
                   </div>
 
                   {/* Category Filter Chips */}
@@ -425,12 +477,12 @@ export default function App() {
                           <DocumentCard
                             key={doc.id}
                             doc={doc}
-                            onSelect={(d) => setSelectedDoc(d)}
+                            onSelect={(d) => handleInitiateViewDoc(d)}
                             isBookmarked={bookmarkedIds.includes(doc.id)}
                             onToggleBookmark={handleToggleBookmark}
                             isRead={readDocIds.includes(doc.id)}
                             onQuickTTS={handleQuickTTS}
-                            onOpenPdf={handleOpenPdf}
+                            onOpenPdf={handleInitiateViewPdf}
                           />
                         ))}
                       </div>
@@ -478,9 +530,12 @@ export default function App() {
                   readDocIds={readDocIds}
                   staffName={staffName}
                   setStaffName={setStaffName}
+                  staffPosition={staffPosition}
+                  setStaffPosition={setStaffPosition}
                   staffBranch={staffBranch}
                   setStaffBranch={setStaffBranch}
-                  onOpenDoc={(d) => setSelectedDoc(d)}
+                  onOpenDoc={(d) => handleInitiateViewDoc(d)}
+                  onOpenWelcomeModal={() => setIsWelcomeOpen(true)}
                 />
               )}
 
@@ -488,9 +543,10 @@ export default function App() {
               {activeTab === 'assistant' && (
                 <ComplianceAssistantView
                   activeDoc={selectedDoc}
+                  documents={documents}
                   onOpenDoc={(id) => {
                     const found = documents.find((d) => d.id === id);
-                    if (found) setSelectedDoc(found);
+                    if (found) handleInitiateViewDoc(found);
                   }}
                 />
               )}
@@ -505,13 +561,7 @@ export default function App() {
             setSelectedDoc(null);
             setActiveTab(tab);
           }}
-        />
-
-        {/* Add SOP / Guide Modal */}
-        <AddDocumentModal
-          isOpen={isAddDocOpen}
-          onClose={() => setIsAddDocOpen(false)}
-          onAddDoc={handleAddCustomDoc}
+          totalDocsCount={documents.length}
         />
 
         {/* AI Compliance Assistant Modal */}
@@ -519,12 +569,52 @@ export default function App() {
           isOpen={isAssistantOpen}
           onClose={() => setIsAssistantOpen(false)}
           activeDoc={selectedDoc}
+          documents={documents}
+          onOpenDoc={(id) => {
+            const found = documents.find((d) => d.id === id);
+            if (found) handleInitiateViewDoc(found);
+          }}
         />
 
-        {/* Source PDF Preview Modal */}
-        <PdfViewerModal
-          doc={pdfModalDoc}
-          onClose={() => setPdfModalDoc(null)}
+        {/* Source PDF Preview Modal (Maintained for emergency admin fallback) */}
+        {pdfModalDoc && (
+          <PdfViewerModal
+            doc={pdfModalDoc}
+            onClose={() => setPdfModalDoc(null)}
+          />
+        )}
+
+        {/* Store Document Lock Modal: "Actual document viewing is via store documents" */}
+        <StoreDocumentLockModal
+          isOpen={!!storeLockDoc}
+          doc={storeLockDoc}
+          onClose={() => setStoreLockDoc(null)}
+          onReadDigitalText={() => {
+            if (storeLockDoc) {
+              handleInitiateViewDoc(storeLockDoc);
+            }
+            setStoreLockDoc(null);
+          }}
+        />
+
+        {/* Confidentiality Agreement Gatekeeper Popup on every page viewed */}
+        <ConfidentialityPopup
+          doc={pendingDocToView}
+          isOpen={isConfidentialityOpen}
+          onAgree={handleAgreeConfidentiality}
+          onCancel={handleCancelConfidentiality}
+        />
+
+        {/* Welcome to Learning and Development Training Hub Modal (Agreement required before entering) */}
+        <WelcomeTrainingHubModal
+          isOpen={isWelcomeOpen || !hasAgreedNDA}
+          onClose={() => {
+            if (hasAgreedNDA) {
+              setIsWelcomeOpen(false);
+            }
+          }}
+          hasAgreedNDA={hasAgreedNDA}
+          onAgreeNDA={handleAgreeNDA}
         />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { FoodSafetyDoc } from '../types/foodSafety';
 import {
   Sparkles,
@@ -9,9 +9,11 @@ import {
   Flame,
   Zap,
   Pause,
-  AlertTriangle,
-  Settings2,
-  CheckCircle2,
+  FileText,
+  ChevronDown,
+  Layers,
+  ArrowRight,
+  ShieldCheck,
 } from 'lucide-react';
 import { TTSService } from '../services/ttsService';
 
@@ -25,17 +27,30 @@ interface Message {
 
 interface ComplianceAssistantViewProps {
   activeDoc?: FoodSafetyDoc | null;
+  documents?: FoodSafetyDoc[];
   onOpenDoc?: (docId: string) => void;
 }
 
 export const ComplianceAssistantView: React.FC<ComplianceAssistantViewProps> = ({
-  activeDoc,
+  activeDoc: initialActiveDoc,
+  documents = [],
+  onOpenDoc,
 }) => {
   // Speed & Model Mode
-  // 'fast': gemini-3.1-flash-lite (fastest!)
+  // 'fast': gemini-3.1-flash-lite (default for instant token streaming)
   // 'standard': gemini-3.8-flash
   // 'complex': gemini-4-argon
   const [speedMode, setSpeedMode] = useState<'fast' | 'standard' | 'complex'>('fast');
+
+  // Currently focused document context ('all' or document id)
+  const [selectedDocId, setSelectedDocId] = useState<string>(
+    initialActiveDoc ? initialActiveDoc.id : 'all'
+  );
+
+  const activeDoc = useMemo(() => {
+    if (selectedDocId === 'all') return null;
+    return documents.find((d) => d.id === selectedDocId) || null;
+  }, [selectedDocId, documents]);
 
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -44,9 +59,11 @@ export const ComplianceAssistantView: React.FC<ComplianceAssistantViewProps> = (
       text: `Hello! I am your **Jiangnan Hotpot / Imperial Kitchen Group** Compliance Intelligence Assistant. 
 
 ⚡ **Speed Mode: Ultra-Fast Active (Gemini 3.1 Flash Lite)**
-Ask me any food safety rule, temperature threshold, color code, or corrective action across our **21 policies and SOPs**.
+I cover **all 33 documents in file**:
+* **21 Company Policies:** IKQAP#001 through IKQAP#021
+* **12 Standard Operating Procedures:** IKQA-SOP#001 through IKQA-SOP#012
 
-Tap any quick prompt below or type your question:`,
+Ask me any specific question about food retention samples, wire slicer procedures, handwashing double-wash, FEFO precedence, allergen alerts, or temperature control!`,
     },
   ]);
 
@@ -76,14 +93,21 @@ Tap any quick prompt below or type your question:`,
     };
   }, []);
 
+  // Quick suggestion prompts covering both SOPs and Policies
   const quickPrompts = [
-    'What is the 15-minute cold chain rule?',
-    'What color towel is used for dining tables?',
-    'Which cutting board is for raw poultry?',
-    'Can an employee work with vomiting or diarrhea?',
-    'What are the 4 approved thawing methods?',
-    'What should I do if a glass breaks in the kitchen?',
-    'What color plates are used for US Beef vs Angus Beef?',
+    { label: 'SOP#001 Double Wash', query: 'What is the Restroom Double Wash handwashing rule in IKQA-SOP#001?' },
+    { label: 'SOP#011 Retention Samples', query: 'What are the daily food retention sample volumes and 5-7 day storage rules in IKQA-SOP#011?' },
+    { label: 'SOP#012 Wire Slicer', query: 'How to use and sanitize the luncheon meat wire slicer in IKQA-SOP#012 and what to do if wire breaks?' },
+    { label: 'SOP#004 FEFO vs FIFO', query: 'Explain FEFO precedence over FIFO and 48-hour near expiry handling in IKQA-SOP#004.' },
+    { label: 'SOP#009 Reject Pulverization', query: 'What is the food reject pulverization protocol in IKQA-SOP#009?' },
+    { label: 'SOP#010 Towel Colors', query: 'What are the 5 towel colors and their strict designated areas in IKQAP#015 & IKQA-SOP#010?' },
+    { label: 'SOP#010 Cutting Boards', query: 'What are the cutting board and meat plate color codes in IKQA-SOP#010?' },
+    { label: 'SOP#003 Pest EFKs', query: 'What are the 3 lines of defense and EFK placement distance in IKQA-SOP#003?' },
+    { label: 'SOP#005 Recall 2-Hour', query: 'What is the 2-hour traceability rule and mock recall schedule in IKQA-SOP#005?' },
+    { label: 'IKQAP#003 15-Min Intake', query: 'What is the 15-minute cold chain intake rule in IKQAP#003?' },
+    { label: 'IKQAP#004 Big 9 Allergens', query: 'What are the Big 9 allergens and emergency anaphylaxis response in IKQAP#004?' },
+    { label: 'IKQAP#005 Big 5 Exclusion', query: 'Which symptoms or Big 5 pathogens bar an employee from the kitchen under IKQAP#005?' },
+    { label: 'IKQAP#017 Glass Breakage', query: 'What is the 3-meter quarantine glass breakage protocol in IKQAP#017?' },
   ];
 
   const handleSend = async (questionText?: string) => {
@@ -137,7 +161,7 @@ Tap any quick prompt below or type your question:`,
           speedMode,
           contextDocTitle: activeDoc ? `${activeDoc.code}: ${activeDoc.title}` : undefined,
           contextDocContent: activeDoc
-            ? `${activeDoc.summary}\n${activeDoc.keyTakeaways.join('\n')}`
+            ? `${activeDoc.summary}\nTakeaways:\n${(activeDoc.keyTakeaways || []).join('\n')}\nRules:\n${(activeDoc.quickRules || []).map(r => `${r.title}: ${r.rule}`).join('\n')}`
             : undefined,
         }),
         signal: controller.signal,
@@ -204,7 +228,7 @@ Tap any quick prompt below or type your question:`,
             speedMode,
             contextDocTitle: activeDoc ? `${activeDoc.code}: ${activeDoc.title}` : undefined,
             contextDocContent: activeDoc
-              ? `${activeDoc.summary}\n${activeDoc.keyTakeaways.join('\n')}`
+              ? `${activeDoc.summary}\nTakeaways:\n${(activeDoc.keyTakeaways || []).join('\n')}\nRules:\n${(activeDoc.quickRules || []).map(r => `${r.title}: ${r.rule}`).join('\n')}`
               : undefined,
           }),
         });
@@ -220,17 +244,19 @@ Tap any quick prompt below or type your question:`,
               : m
           )
         );
-      } catch (fbErr) {
+      } catch {
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantMsgId
               ? {
                   ...m,
                   text: `### **Imperial Kitchen Group Compliance Standard**
+* **Scope:** Covers all 33 documents (IKQAP#001 - #021 and IKQA-SOP#001 - #012).
 * **Cold Storage:** Refrigerators strictly at 0°C to 4°C; Freezers at -18°C or below.
 * **15-Minute Rule:** Cold deliveries must reach cold storage within 15 minutes of dock arrival.
-* **Danger Zone (5°C to 60°C):** Never exceed 1 hour cumulative exposure.
-* **Towel Colors:** White = clean wares; Blue = FOH dining; Green = kitchen prep; Red = restroom only.`,
+* **Danger Zone (5°C to 60°C):** High-risk foods must never stay >1 hour cumulative.
+* **Handwashing:** 20-second wash + Restroom Double Wash method (IKQA-SOP#001).
+* **Retention Samples:** 100-150mL broth, 100g meats held 5-7 days under lock (IKQA-SOP#011).`,
                   isStreaming: false,
                 }
               : m
@@ -314,9 +340,68 @@ Tap any quick prompt below or type your question:`,
       {
         id: 'welcome-reset',
         role: 'assistant',
-        text: `Chat reset. Ask me any question for ultra-fast guidance!`,
+        text: `Chat reset. Ask me any question covering all 33 policies and SOPs for ultra-fast guidance!`,
       },
     ]);
+  };
+
+  // Helper to detect document citations and render clickable jump badges
+  const renderTextWithDocCitations = (text: string) => {
+    // Matches patterns like IKQAP#001, IKQA-SOP#011, SOP#004, etc.
+    const regex = /(IKQA-SOP#\d{3}|IKQAP#\d{3}|SOP#\d{3})/g;
+    const parts = text.split(regex);
+
+    return parts.map((part, pIdx) => {
+      const isDocCode = regex.test(part);
+      if (isDocCode) {
+        // Find matching doc
+        const normalizedCode = part.startsWith('SOP#') ? `IKQA-${part}` : part;
+        const matched = documents.find(
+          (d) => d.code.toUpperCase() === normalizedCode.toUpperCase()
+        );
+
+        if (matched && onOpenDoc) {
+          return (
+            <button
+              key={pIdx}
+              onClick={() => onOpenDoc(matched.id)}
+              className="inline-flex items-center gap-1 mx-1 px-1.5 py-0.5 rounded-md bg-red-950/80 hover:bg-red-900 text-red-200 hover:text-white border border-red-800/80 text-[10px] font-mono font-bold transition-all shadow-sm active:scale-95 align-baseline"
+              title={`Open ${matched.title}`}
+            >
+              <FileText className="w-2.5 h-2.5 text-amber-400" />
+              <span>{part}</span>
+              <ArrowRight className="w-2.5 h-2.5 opacity-60" />
+            </button>
+          );
+        }
+
+        return (
+          <span
+            key={pIdx}
+            className="inline-block mx-0.5 px-1 py-0.2 rounded bg-slate-900 text-amber-300 font-mono font-bold text-[10px] border border-slate-800"
+          >
+            {part}
+          </span>
+        );
+      }
+
+      // Normal text with bold support
+      const boldParts = part.split(/(\*\*.*?\*\*)/g);
+      return (
+        <span key={pIdx}>
+          {boldParts.map((bp, bpIdx) => {
+            if (bp.startsWith('**') && bp.endsWith('**')) {
+              return (
+                <strong key={bpIdx} className="text-white font-bold">
+                  {bp.slice(2, -2)}
+                </strong>
+              );
+            }
+            return bp;
+          })}
+        </span>
+      );
+    });
   };
 
   // Render markdown text cleanly
@@ -331,35 +416,34 @@ Tap any quick prompt below or type your question:`,
       if (trimmed.startsWith('### ')) {
         const titleText = trimmed.replace(/^###\s+/, '').replace(/\*\*/g, '');
         return (
-          <h4 key={lIdx} className="text-xs sm:text-sm font-black text-red-300 mt-2 mb-1 flex items-center gap-1.5">
-            <span className="w-1.5 h-3 bg-red-500 rounded-full inline-block" />
+          <h4 key={lIdx} className="text-xs sm:text-sm font-black text-red-300 mt-2.5 mb-1.5 flex items-center gap-1.5">
+            <span className="w-1.5 h-3.5 bg-red-500 rounded-full inline-block" />
             <span>{titleText}</span>
           </h4>
         );
       }
 
+      if (trimmed.startsWith('#### ')) {
+        const subTitleText = trimmed.replace(/^####\s+/, '').replace(/\*\*/g, '');
+        return (
+          <h5 key={lIdx} className="text-[11px] sm:text-xs font-bold text-amber-300 mt-2 mb-1 flex items-center gap-1">
+            <span className="w-1 h-2.5 bg-amber-500 rounded-sm inline-block" />
+            <span>{subTitleText}</span>
+          </h5>
+        );
+      }
+
       if (trimmed === '---') {
-        return <hr key={lIdx} className="my-1.5 border-slate-800" />;
+        return <hr key={lIdx} className="my-2 border-slate-800" />;
       }
 
       if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) {
         const itemText = trimmed.replace(/^[\*\-]\s+/, '');
-        const parts = itemText.split(/(\*\*.*?\*\*)/g);
-
         return (
           <div key={lIdx} className="flex items-start gap-1.5 my-0.5 pl-1 text-slate-200">
             <span className="text-red-400 font-bold mt-0.5">•</span>
             <span className="leading-relaxed">
-              {parts.map((p, pIdx) => {
-                if (p.startsWith('**') && p.endsWith('**')) {
-                  return (
-                    <strong key={pIdx} className="text-white font-bold">
-                      {p.slice(2, -2)}
-                    </strong>
-                  );
-                }
-                return p;
-              })}
+              {renderTextWithDocCitations(itemText)}
             </span>
           </div>
         );
@@ -370,46 +454,29 @@ Tap any quick prompt below or type your question:`,
         if (match) {
           const num = match[1];
           const rest = match[2];
-          const parts = rest.split(/(\*\*.*?\*\*)/g);
           return (
             <div key={lIdx} className="flex items-start gap-1.5 my-0.5 pl-1 text-slate-200">
               <span className="text-amber-400 font-mono font-bold text-[10px] px-1 py-0.2 rounded bg-slate-900 border border-slate-800">
                 {num}
               </span>
               <span className="leading-relaxed">
-                {parts.map((p, pIdx) => {
-                  if (p.startsWith('**') && p.endsWith('**')) {
-                    return (
-                      <strong key={pIdx} className="text-white font-bold">
-                        {p.slice(2, -2)}
-                      </strong>
-                    );
-                  }
-                  return p;
-                })}
+                {renderTextWithDocCitations(rest)}
               </span>
             </div>
           );
         }
       }
 
-      const parts = trimmed.split(/(\*\*.*?\*\*)/g);
       return (
         <p key={lIdx} className="text-xs text-slate-200 leading-relaxed my-0.5">
-          {parts.map((p, pIdx) => {
-            if (p.startsWith('**') && p.endsWith('**')) {
-              return (
-                <strong key={pIdx} className="text-white font-bold">
-                  {p.slice(2, -2)}
-                </strong>
-              );
-            }
-            return p;
-          })}
+          {renderTextWithDocCitations(trimmed)}
         </p>
       );
     });
   };
+
+  const policiesList = useMemo(() => documents.filter((d) => d.type === 'policy'), [documents]);
+  const sopsList = useMemo(() => documents.filter((d) => d.type === 'sop'), [documents]);
 
   return (
     <div className="space-y-3 pb-12 animate-fadeIn flex flex-col h-[calc(100vh-140px)] min-h-[550px]">
@@ -425,16 +492,16 @@ Tap any quick prompt below or type your question:`,
                 AI Compliance Assistant
               </h2>
               <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800/60">
-                Live Stream
+                33 Docs Grounded
               </span>
             </div>
             <p className="text-[11px] text-slate-300">
-              Multi-turn compliance dialogue with sub-second token streaming
+              Covers all 21 Policies (IKQAP#001-#021) & 12 SOPs (IKQA-SOP#001-#012)
             </p>
           </div>
         </div>
 
-        {/* Speed / Model Selection Buttons */}
+        {/* Speed / Model Selection Buttons & Clear Chat */}
         <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800 self-end sm:self-auto text-xs">
           <button
             onClick={() => setSpeedMode('fast')}
@@ -470,6 +537,49 @@ Tap any quick prompt below or type your question:`,
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
         </div>
+      </div>
+
+      {/* Scope Selector: Target specific document or all 33 docs */}
+      <div className="flex items-center gap-2 px-3 py-2 bg-slate-900/80 border border-slate-800 rounded-xl text-xs flex-shrink-0">
+        <div className="flex items-center gap-1.5 text-slate-400 flex-shrink-0">
+          <Layers className="w-3.5 h-3.5 text-amber-400" />
+          <span className="font-semibold text-[11px]">Context Scope:</span>
+        </div>
+
+        <div className="relative flex-1">
+          <select
+            value={selectedDocId}
+            onChange={(e) => setSelectedDocId(e.target.value)}
+            className="w-full bg-slate-950 text-slate-200 text-xs rounded-lg px-2.5 py-1 border border-slate-700/80 focus:outline-none focus:border-red-500 pr-7 appearance-none cursor-pointer font-medium"
+          >
+            <option value="all">🌐 All 33 Documents in File (21 Policies + 12 SOPs)</option>
+            <optgroup label="Standard Operating Procedures (12 Docs)">
+              {sopsList.map((doc) => (
+                <option key={doc.id} value={doc.id}>
+                  {doc.code}: {doc.title}
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="Company Quality Policies (21 Docs)">
+              {policiesList.map((doc) => (
+                <option key={doc.id} value={doc.id}>
+                  {doc.code}: {doc.title}
+                </option>
+              ))}
+            </optgroup>
+          </select>
+          <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+        </div>
+
+        {activeDoc && onOpenDoc && (
+          <button
+            onClick={() => onOpenDoc(activeDoc.id)}
+            className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold flex items-center gap-1 whitespace-nowrap border border-slate-700 transition-colors flex-shrink-0"
+          >
+            <FileText className="w-3 h-3 text-red-400" />
+            <span>Open Doc</span>
+          </button>
+        )}
       </div>
 
       {/* Chat Messages Scrollable Thread */}
@@ -539,9 +649,10 @@ Tap any quick prompt below or type your question:`,
                       )}
                     </button>
 
-                    <span className="text-[9px] text-slate-500 font-mono">
-                      {m.modelUsed || 'gemini-3.1-flash-lite'}
-                    </span>
+                    <div className="flex items-center gap-1.5 text-[9px] text-slate-500 font-mono">
+                      <ShieldCheck className="w-3 h-3 text-emerald-500 inline" />
+                      <span>{m.modelUsed || 'gemini-3.1-flash-lite'}</span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -567,15 +678,15 @@ Tap any quick prompt below or type your question:`,
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Quick Suggestion Chips */}
+      {/* Quick Suggestion Chips covering all 33 documents */}
       <div className="flex-shrink-0 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-0.5">
         {quickPrompts.map((qp, i) => (
           <button
             key={i}
-            onClick={() => handleSend(qp)}
+            onClick={() => handleSend(qp.query)}
             className="px-2.5 py-1 rounded-full bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white text-[11px] whitespace-nowrap transition-colors border border-slate-800 flex-shrink-0 shadow-sm"
           >
-            {qp}
+            {qp.label}
           </button>
         ))}
       </div>
@@ -588,9 +699,9 @@ Tap any quick prompt below or type your question:`,
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder={
-            speedMode === 'fast'
-              ? 'Fast mode: Ask about any food safety rule, temperature, towel color...'
-              : 'Ask a compliance question...'
+            activeDoc
+              ? `Ask about ${activeDoc.code}: ${activeDoc.title}...`
+              : 'Ask any question across all 33 documents in file...'
           }
           className="flex-1 bg-transparent px-3 py-1.5 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none"
         />

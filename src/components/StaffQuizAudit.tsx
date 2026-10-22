@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FoodSafetyDoc } from '../types/foodSafety';
 import {
   ShieldCheck,
@@ -10,16 +10,26 @@ import {
   RefreshCw,
   AlertCircle,
   FileBadge,
+  GraduationCap,
+  Users,
+  Lock,
+  Briefcase,
+  Printer,
+  Sparkles,
 } from 'lucide-react';
+import { TrainingCertificateModal } from './TrainingCertificateModal';
 
 interface StaffQuizAuditProps {
   documents: FoodSafetyDoc[];
   readDocIds: string[];
   staffName: string;
   setStaffName: (name: string) => void;
+  staffPosition: string;
+  setStaffPosition: (pos: string) => void;
   staffBranch: string;
   setStaffBranch: (branch: string) => void;
   onOpenDoc: (doc: FoodSafetyDoc) => void;
+  onOpenWelcomeModal?: () => void;
 }
 
 export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
@@ -27,9 +37,12 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
   readDocIds,
   staffName,
   setStaffName,
+  staffPosition,
+  setStaffPosition,
   staffBranch,
   setStaffBranch,
   onOpenDoc,
+  onOpenWelcomeModal,
 }) => {
   // Aggregate all quiz questions across all documents
   const allQuestions = documents.flatMap((d) =>
@@ -45,6 +58,19 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
   );
   const [userAnswers, setUserAnswers] = useState<Record<number, number>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
+
+  // Completed timestamp & history persistence
+  const [certCompletedAt, setCertCompletedAt] = useState<string>(() => {
+    return localStorage.getItem('ikqa_cert_completed_at') || '';
+  });
+  const [hasPassedHistory, setHasPassedHistory] = useState<boolean>(() => {
+    return localStorage.getItem('ikqa_has_passed_quiz') === 'true';
+  });
+  const [lastPassedScore, setLastPassedScore] = useState<number>(() => {
+    const saved = localStorage.getItem('ikqa_last_passed_score');
+    return saved ? parseInt(saved, 10) : 10;
+  });
 
   const readPercentage = Math.round((readDocIds.length / documents.length) * 100);
 
@@ -59,8 +85,24 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
   const score = calculateScore();
   const passed = score >= 8; // 8 out of 10 to pass
 
+  // Record pass result when submitted
+  useEffect(() => {
+    if (isSubmitted && passed) {
+      const timestamp = new Date().toISOString();
+      setCertCompletedAt(timestamp);
+      setHasPassedHistory(true);
+      setLastPassedScore(score);
+      try {
+        localStorage.setItem('ikqa_has_passed_quiz', 'true');
+        localStorage.setItem('ikqa_last_passed_score', String(score));
+        localStorage.setItem('ikqa_cert_completed_at', timestamp);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [isSubmitted, passed, score]);
+
   const handleRestartQuiz = () => {
-    // Shuffle and pick 10
     const shuffled = [...allQuestions].sort(() => 0.5 - Math.random());
     setActiveQuizQuestions(shuffled.slice(0, 10));
     setUserAnswers({});
@@ -69,19 +111,30 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
 
   return (
     <div className="space-y-4 pb-12 animate-fadeIn">
-      {/* Staff ID & Branch Profile Card */}
+      {/* Staff ID, Position & Branch Profile Card */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-2">
           <h2 className="text-sm font-bold text-white flex items-center gap-2">
             <User className="w-4 h-4 text-red-400" />
             <span>Staff Compliance Profile</span>
           </h2>
-          <span className="text-[10px] text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/40">
-            Audit Ready
-          </span>
+          <div className="flex items-center gap-2">
+            {hasPassedHistory && (
+              <button
+                onClick={() => setIsCertModalOpen(true)}
+                className="px-2.5 py-1 rounded-xl bg-gradient-to-r from-amber-500/20 to-red-500/20 hover:from-amber-500/30 hover:to-red-500/30 border border-amber-500/40 text-amber-300 font-bold text-[11px] flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+              >
+                <Award className="w-3.5 h-3.5 text-amber-400" />
+                <span>View Certificate</span>
+              </button>
+            )}
+            <span className="text-[10px] text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/40">
+              Audit Ready
+            </span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
             <label className="text-[11px] text-slate-400 font-medium block mb-1">
               Employee Full Name:
@@ -90,7 +143,20 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
               type="text"
               value={staffName}
               onChange={(e) => setStaffName(e.target.value)}
-              placeholder="e.g. Maria Santos (Kitchen Captain)"
+              placeholder="e.g. Maria Santos"
+              className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-[11px] text-slate-400 font-medium block mb-1">
+              Position / Designation:
+            </label>
+            <input
+              type="text"
+              value={staffPosition}
+              onChange={(e) => setStaffPosition(e.target.value)}
+              placeholder="e.g. Kitchen Shift Lead"
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-red-500"
             />
           </div>
@@ -126,20 +192,136 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
         </div>
       </div>
 
-      {/* Passed Certification Badge */}
-      {isSubmitted && passed && (
-        <div className="bg-gradient-to-br from-emerald-950 via-slate-900 to-amber-950/40 border border-emerald-600/60 rounded-2xl p-5 text-center space-y-2 shadow-xl animate-fadeIn">
-          <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center">
-            <Award className="w-8 h-8 text-emerald-400" />
+      {/* The Learning and Development Team Card */}
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 sm:p-5 space-y-3.5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-white flex items-center gap-2">
+            <GraduationCap className="w-4 h-4 text-amber-400" />
+            <span>The Learning and Development Team</span>
+          </h2>
+          <span className="text-[11px] font-bold text-red-400">
+            Imperial Kitchen Group
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {/* L&D Manager */}
+          <div className="p-3 rounded-xl bg-slate-950/70 border border-red-900/30 flex items-start justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-red-400 block">
+                Learning and Development Manager
+              </span>
+              <span className="text-sm font-bold text-white">Joy Bernardo</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">
+                Department Leadership & Standards
+              </span>
+            </div>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-950 text-red-300 border border-red-700/40">
+              Leadership
+            </span>
           </div>
-          <h3 className="text-base sm:text-lg font-black text-white">
-            Food Safety Compliance Certified!
-          </h3>
-          <p className="text-xs text-slate-300 max-w-sm mx-auto">
-            {staffName || 'Staff Member'} ({staffBranch || 'Branch'}) has successfully demonstrated compliance with Imperial Kitchen Group Inc. & Jiangnan Hotpot standards.
-          </p>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-900/60 text-emerald-300 text-xs font-mono font-bold border border-emerald-700/60 mt-1">
-            <FileBadge className="w-4 h-4" /> Score: {score} / 10 (Passed)
+
+          {/* L&D Specialists */}
+          <div className="p-3 rounded-xl bg-slate-950/70 border border-amber-900/30 flex items-start justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">
+                Learning and Development Specialist
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-bold text-white">John Dave De Leon</span>
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-amber-950 text-amber-300 border border-amber-700/50">
+                  FSCO
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-400 block mt-0.5">
+                Food Safety Compliance & Kitchen Standards
+              </span>
+            </div>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700/40">
+              FSCO
+            </span>
+          </div>
+
+          <div className="p-3 rounded-xl bg-slate-950/70 border border-amber-900/30 flex items-start justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 block">
+                Learning and Development Specialist
+              </span>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-bold text-white">Lany Ann Nemenzo</span>
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-amber-950 text-amber-300 border border-amber-700/50">
+                  FSCO
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-400 block mt-0.5">
+                Service Standards and Operational Sequences
+              </span>
+            </div>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-700/40">
+              FSCO
+            </span>
+          </div>
+
+          {/* L&D Coordinator */}
+          <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800 flex items-start justify-between">
+            <div>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                Learning and Development Training Coordinator
+              </span>
+              <span className="text-sm font-bold text-white">Dice Divine Torralba</span>
+              <span className="text-[11px] text-slate-400 block mt-0.5">
+                Training Administration, Scheduling & Assessment Records
+              </span>
+            </div>
+            <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+              Records
+            </span>
+          </div>
+        </div>
+
+        <div className="p-2.5 rounded-xl bg-amber-950/30 border border-amber-800/40 flex items-center justify-between text-[11px] text-amber-200">
+          <div className="flex items-center gap-2">
+            <Lock className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+            <span>Confidentiality Agreement Active • Internal Staff Training Only</span>
+          </div>
+          {onOpenWelcomeModal && (
+            <button
+              onClick={onOpenWelcomeModal}
+              className="text-amber-400 font-bold hover:underline ml-2 flex-shrink-0"
+            >
+              Read Agreement
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Passed Certification Badge & System Generated Certificate Button */}
+      {isSubmitted && passed && (
+        <div className="bg-gradient-to-br from-emerald-950 via-slate-900 to-amber-950/40 border-2 border-emerald-500/70 rounded-2xl p-5 sm:p-6 text-center space-y-3.5 shadow-2xl animate-fadeIn">
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-emerald-500/20 border-2 border-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-950/80">
+            <Award className="w-9 h-9 text-emerald-400" />
+          </div>
+          <div className="space-y-1">
+            <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-emerald-950 text-emerald-300 border border-emerald-700/60 inline-flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+              Operational Competency Verified
+            </span>
+            <h3 className="text-lg sm:text-2xl font-black text-white">
+              Food Safety & SOP Compliance Certified!
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto leading-relaxed">
+              <strong className="text-white">{staffName || 'Staff Member'}</strong> ({staffPosition || 'Kitchen Shift Lead'}) at <span className="text-amber-300">{staffBranch || 'Jiangnan Hotpot'}</span> has successfully passed the Shift Compliance Assessment with a verified score of <strong className="text-emerald-400">{score}/10 ({score * 10}%)</strong>.
+            </p>
+          </div>
+
+          <div className="pt-2">
+            <button
+              onClick={() => setIsCertModalOpen(true)}
+              className="w-full sm:w-auto px-7 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-amber-600 to-red-600 hover:from-amber-400 hover:to-red-500 text-slate-950 font-black text-xs sm:text-sm shadow-xl shadow-amber-950/70 active:scale-95 transition-all inline-flex items-center justify-center gap-2"
+            >
+              <Award className="w-4 h-4 text-slate-950" />
+              <span>View & Print Official System Certificate</span>
+            </button>
           </div>
         </div>
       )}
@@ -153,7 +335,7 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
               <span>Shift Compliance Assessment (10 Questions)</span>
             </h3>
             <p className="text-xs text-slate-400">
-              Pass score is 8/10 to verify operational readiness.
+              Pass score is 8/10 to verify operational readiness and generate your certificate.
             </p>
           </div>
 
@@ -242,10 +424,19 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
               Submit Assessment
             </button>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <span className="text-xs font-bold text-white">
-                Final Score: {score} / 10
+                Final Score: {score} / 10 ({score >= 8 ? 'Passed' : 'Needs Review'})
               </span>
+              {passed && (
+                <button
+                  onClick={() => setIsCertModalOpen(true)}
+                  className="px-3 py-1.5 rounded-xl bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 text-xs font-bold flex items-center gap-1.5 transition-all"
+                >
+                  <Award className="w-3.5 h-3.5" />
+                  <span>View Certificate</span>
+                </button>
+              )}
               <button
                 onClick={handleRestartQuiz}
                 className="text-xs text-red-400 hover:underline font-semibold"
@@ -256,6 +447,24 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
           )}
         </div>
       </div>
+
+      {/* Official System Training Certificate Modal */}
+      <TrainingCertificateModal
+        isOpen={isCertModalOpen}
+        onClose={() => setIsCertModalOpen(false)}
+        staffName={staffName}
+        staffPosition={staffPosition}
+        staffBranch={staffBranch}
+        quizTitle="Food Safety, SOP & Operational Compliance Competency Assessment"
+        score={isSubmitted && passed ? score : lastPassedScore}
+        totalQuestions={10}
+        completedAt={certCompletedAt}
+        onUpdateStaffProfile={(name, pos, branch) => {
+          setStaffName(name);
+          setStaffPosition(pos);
+          setStaffBranch(branch);
+        }}
+      />
     </div>
   );
 };

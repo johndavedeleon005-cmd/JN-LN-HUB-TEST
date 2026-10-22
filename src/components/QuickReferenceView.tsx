@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Thermometer,
   ShieldAlert,
@@ -9,55 +9,842 @@ import {
   Clock,
   CheckCircle2,
   AlertCircle,
-  Volume2,
+  Play,
+  RotateCcw,
+  Scissors,
+  Trash2,
+  Bug,
+  ShieldCheck,
+  Archive,
+  UserCheck,
+  Repeat,
+  Check,
+  Flame,
+  PhoneOff,
+  PackageCheck,
+  Droplets,
 } from 'lucide-react';
 
+type SectionId =
+  | 'handwashing'
+  | 'boards'
+  | 'retention'
+  | 'fefo'
+  | 'slicer'
+  | 'pest'
+  | 'waste'
+  | 'hygiene_effects'
+  | 'recall'
+  | 'towels'
+  | 'temperatures'
+  | 'allergens'
+  | 'storage'
+  | 'calibration';
+
+interface SectionMeta {
+  id: SectionId;
+  label: string;
+  sub: string;
+  type: 'sop' | 'policy';
+  icon: string;
+}
+
 export const QuickReferenceView: React.FC = () => {
-  const [activeSection, setActiveSection] = useState<
-    'towels' | 'boards' | 'temperatures' | 'allergens' | 'storage' | 'calibration'
-  >('towels');
+  const [activeSection, setActiveSection] = useState<SectionId>('handwashing');
+  const [filterType, setFilterType] = useState<'all' | 'sop' | 'policy'>('all');
+
+  // Interactive 20-Second Handwashing Practice Timer
+  const [washTimer, setWashTimer] = useState<number>(20);
+  const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
+  const [timerCompleted, setTimerCompleted] = useState<boolean>(false);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout | null = null;
+    if (isTimerRunning && washTimer > 0) {
+      interval = setInterval(() => {
+        setWashTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (washTimer === 0 && isTimerRunning) {
+      setIsTimerRunning(false);
+      setTimerCompleted(true);
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isTimerRunning, washTimer]);
+
+  const handleStartTimer = () => {
+    setWashTimer(20);
+    setTimerCompleted(false);
+    setIsTimerRunning(true);
+  };
+
+  const handleResetTimer = () => {
+    setIsTimerRunning(false);
+    setWashTimer(20);
+    setTimerCompleted(false);
+  };
+
+  const sections: SectionMeta[] = [
+    // Standard Operating Procedures (SOPs)
+    { id: 'handwashing', label: '6-Step Handwash', sub: 'IKQA-SOP#001', type: 'sop', icon: '🧼' },
+    { id: 'boards', label: 'Boards & Plates', sub: 'IKQA-SOP#010', type: 'sop', icon: '🥩' },
+    { id: 'retention', label: 'Food Retention Samples', sub: 'IKQA-SOP#011', type: 'sop', icon: '🧪' },
+    { id: 'fefo', label: 'FIFO & FEFO Precedence', sub: 'IKQA-SOP#004', type: 'sop', icon: '🔄' },
+    { id: 'slicer', label: 'Wire Slicer & Luncheon', sub: 'IKQA-SOP#012', type: 'sop', icon: '🔪' },
+    { id: 'pest', label: 'Pest Control (IPM)', sub: 'IKQA-SOP#003', type: 'sop', icon: '🪲' },
+    { id: 'waste', label: 'Waste & Reject Crushing', sub: 'IKQA-SOP#009', type: 'sop', icon: '🗑️' },
+    { id: 'hygiene_effects', label: 'Hygiene & Bare Elbows', sub: 'IKQA-SOP#002/#008', type: 'sop', icon: '🪒' },
+    { id: 'recall', label: 'Traceability & Recall', sub: 'IKQA-SOP#005/#007', type: 'sop', icon: '🚨' },
+
+    // Core Policies
+    { id: 'towels', label: 'Towel Matrix', sub: 'IKQAP#015', type: 'policy', icon: '🧽' },
+    { id: 'temperatures', label: 'Cold Chain & Danger Zone', sub: 'IKQAP#001/#003', type: 'policy', icon: '❄️' },
+    { id: 'allergens', label: 'Big 9 Allergens', sub: 'IKQAP#004', type: 'policy', icon: '⚠️' },
+    { id: 'storage', label: '5S Chiller Rack', sub: 'IKQAP#011', type: 'policy', icon: '📦' },
+    { id: 'calibration', label: 'Scale & Temp Calibration', sub: 'IKQAP#020', type: 'policy', icon: '⚖️' },
+  ];
+
+  const filteredSections = sections.filter((s) => {
+    if (filterType === 'all') return true;
+    return s.type === filterType;
+  });
 
   return (
     <div className="space-y-4 pb-12 animate-fadeIn">
       {/* Top Banner */}
       <div className="bg-gradient-to-r from-red-950 via-slate-900 to-amber-950 border border-red-800/40 rounded-2xl p-4 shadow-lg">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-red-400 animate-ping" />
-          <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
-            Floor Compliance Cheat-Sheets
-          </h2>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-400 animate-ping" />
+            <h2 className="text-base sm:text-lg font-black text-white tracking-tight">
+              Floor Compliance Cheat-Sheets
+            </h2>
+          </div>
+          <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-red-900/60 text-red-200 border border-red-700/50">
+            {sections.length} Quick Refs
+          </span>
         </div>
         <p className="text-xs text-slate-300 mt-1">
-          Instant visual standards for Jiangnan Hotpot kitchen lines, receiving bays, and dining service.
+          Instant visual standards, operational SOPs, and food safety thresholds for Jiangnan Hotpot & Imperial Kitchen Group.
         </p>
-      </div>
 
-      {/* Pill Selector */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
-        {[
-          { id: 'towels', label: '🧼 Towel Matrix', sub: 'IKQAP#015' },
-          { id: 'boards', label: '🥩 Cutting Boards & Plates', sub: 'SOP#010' },
-          { id: 'temperatures', label: '❄️ Cold Chain & Temps', sub: 'IKQAP#003' },
-          { id: 'allergens', label: '⚠️ Big 9 Allergens', sub: 'IKQAP#004' },
-          { id: 'storage', label: '📦 Storage Hierarchy 5S', sub: 'IKQAP#011' },
-          { id: 'calibration', label: '⚖️ Calibration Tolerances', sub: 'IKQAP#020' },
-        ].map((sec) => (
+        {/* Filter Toggle Chips */}
+        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-red-900/40">
           <button
-            key={sec.id}
-            onClick={() => setActiveSection(sec.id as any)}
-            className={`px-3 py-2 rounded-xl whitespace-nowrap font-bold flex flex-col items-center gap-0.5 transition-all ${
-              activeSection === sec.id
-                ? 'bg-red-600 text-white shadow-md'
-                : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+            onClick={() => setFilterType('all')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
+              filterType === 'all'
+                ? 'bg-red-600 text-white shadow-sm'
+                : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
             }`}
           >
-            <span>{sec.label}</span>
-            <span className="text-[10px] font-mono opacity-80">{sec.sub}</span>
+            All Cheat-Sheets ({sections.length})
+          </button>
+          <button
+            onClick={() => setFilterType('sop')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
+              filterType === 'sop'
+                ? 'bg-amber-600 text-white shadow-sm'
+                : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            <span>📋 Standard Operating Procedures ({sections.filter((s) => s.type === 'sop').length})</span>
+          </button>
+          <button
+            onClick={() => setFilterType('policy')}
+            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 ${
+              filterType === 'policy'
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'bg-slate-900/80 text-slate-400 hover:text-white border border-slate-800'
+            }`}
+          >
+            <span>🏛️ Policies ({sections.filter((s) => s.type === 'policy').length})</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Pill Selector Scrollable */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+        {filteredSections.map((sec) => (
+          <button
+            key={sec.id}
+            onClick={() => setActiveSection(sec.id)}
+            className={`px-3 py-2 rounded-xl whitespace-nowrap font-bold flex flex-col items-center gap-0.5 transition-all ${
+              activeSection === sec.id
+                ? 'bg-red-600 text-white shadow-md scale-102 ring-2 ring-red-400/50'
+                : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800 hover:border-slate-700'
+            }`}
+          >
+            <div className="flex items-center gap-1.5">
+              <span>{sec.icon}</span>
+              <span>{sec.label}</span>
+            </div>
+            <span
+              className={`text-[9px] font-mono px-1 rounded ${
+                activeSection === sec.id
+                  ? 'bg-red-800/80 text-red-100'
+                  : sec.type === 'sop'
+                  ? 'bg-amber-950/70 text-amber-300'
+                  : 'bg-slate-800 text-slate-400'
+              }`}
+            >
+              {sec.sub}
+            </span>
           </button>
         ))}
       </div>
 
-      {/* SECTION 1: TOWEL MANAGEMENT MATRIX */}
+      {/* =========================================================================
+          SOP 1: HANDWASHING & DOUBLE WASH (IKQA-SOP#001)
+         ========================================================================= */}
+      {activeSection === 'handwashing' && (
+        <div className="space-y-4">
+          {/* Practice Timer Card */}
+          <div className="bg-gradient-to-br from-slate-900 to-cyan-950/40 border border-cyan-800/50 rounded-2xl p-4 shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="space-y-1 text-center sm:text-left">
+              <span className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider flex items-center gap-1 justify-center sm:justify-start">
+                <Droplets className="w-3.5 h-3.5" />
+                <span>Audited Skill Drill</span>
+              </span>
+              <h3 className="text-sm font-bold text-white">
+                20-Second Handwashing Practice Timer
+              </h3>
+              <p className="text-xs text-slate-300">
+                10 full seconds of vigorous scrubbing (wrists, nails, between fingers) + 10s rinse & dry.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div
+                className={`w-16 h-16 rounded-full flex flex-col items-center justify-center font-mono font-black text-xl border-4 transition-all ${
+                  timerCompleted
+                    ? 'border-emerald-500 bg-emerald-950 text-emerald-300 scale-105'
+                    : isTimerRunning
+                    ? 'border-cyan-400 bg-cyan-950 text-cyan-200 animate-pulse'
+                    : 'border-slate-700 bg-slate-950 text-slate-400'
+                }`}
+              >
+                {timerCompleted ? (
+                  <Check className="w-7 h-7 text-emerald-400" />
+                ) : (
+                  <span>{washTimer}s</span>
+                )}
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                {!isTimerRunning ? (
+                  <button
+                    onClick={handleStartTimer}
+                    className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 shadow"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>{timerCompleted ? 'Wash Again' : 'Start Wash'}</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleResetTimer}
+                    className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold text-xs flex items-center gap-1.5 border border-slate-700"
+                  >
+                    <RotateCcw className="w-3.5 h-3.5" />
+                    <span>Reset</span>
+                  </button>
+                )}
+                {timerCompleted && (
+                  <span className="text-[10px] text-emerald-400 font-bold text-center">
+                    PASSED QA!
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 6-Step Visual Cards */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <span>Six-Step 20-Second Technique (IKQA-SOP#001 Section 4)</span>
+            </h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+              {[
+                { step: '1', title: 'Wet Hands', desc: 'Warm potable water (38°C - 43°C).' },
+                { step: '2', title: 'Liquid Soap', desc: 'Apply antimicrobial liquid soap. (No bar soap!)' },
+                { step: '3', title: 'Scrub 10s', desc: 'Vigorously rub palms, wrists, fingers, under nails.' },
+                { step: '4', title: 'Rinse Well', desc: 'Clean running water flowing fingertips down.' },
+                { step: '5', title: 'Single Towel', desc: 'Dry thoroughly with single-use paper towel.' },
+                { step: '6', title: 'Turn Tap Off', desc: 'Use paper towel as barrier to close faucet.' },
+              ].map((s) => (
+                <div key={s.step} className="p-3 rounded-xl bg-slate-950 border border-slate-800 flex flex-col justify-between">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="w-5 h-5 rounded-full bg-cyan-600/30 text-cyan-300 font-mono text-xs font-bold flex items-center justify-center border border-cyan-500/40">
+                      {s.step}
+                    </span>
+                    <span className="text-[10px] font-bold text-slate-400">Step {s.step}</span>
+                  </div>
+                  <span className="text-xs font-bold text-white block mb-0.5">{s.title}</span>
+                  <p className="text-[11px] text-slate-400 leading-tight">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* The Restroom Double Wash & Bar Soap Prohibition */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-3.5 bg-red-950/40 border border-red-700/50 rounded-xl space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-red-300 uppercase tracking-wide">
+                <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0" />
+                <span>Restroom Double Wash Method</span>
+              </div>
+              <p className="text-xs text-slate-200 leading-relaxed">
+                Employees leaving the comfort room <strong>MUST</strong> wash hands once inside the restroom, and immediately perform a <strong>second complete 20-second wash</strong> at the kitchen handwash sink before handling food or clean wares.
+              </p>
+              <div className="text-[10px] font-semibold text-red-300 bg-red-900/40 p-2 rounded-lg border border-red-800/40">
+                ⚠️ Automatic Contamination: Any food touched after a missed handwash is deemed adulterated and must be immediately discarded.
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-amber-950/40 border border-amber-700/50 rounded-xl space-y-2">
+              <div className="flex items-center gap-2 text-xs font-bold text-amber-300 uppercase tracking-wide">
+                <ShieldAlert className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <span>Prohibited Handwash Practices</span>
+              </div>
+              <ul className="text-xs text-slate-200 space-y-1.5">
+                <li className="flex items-start gap-1.5">
+                  <span className="text-red-400 font-bold">✕</span>
+                  <span><strong>Bar Soap Banned:</strong> Harbors bacterial biofilm reservoirs. Liquid antimicrobial only.</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-red-400 font-bold">✕</span>
+                  <span><strong>Hand Sink Misuse:</strong> Never wash food, prep ingredients, rinse dishes, or dump mop water in hand sinks.</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-emerald-400 font-bold">✓</span>
+                  <span><strong>Unobstructed Access:</strong> Sinks must remain 100% free of boxes, pans, or trash cans at all times.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SOP 2: FOOD RETENTION SAMPLES (IKQA-SOP#011)
+         ========================================================================= */}
+      {activeSection === 'retention' && (
+        <div className="space-y-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Archive className="w-4 h-4 text-amber-400" />
+                <span>Daily Food Retention Protocol (IKQA-SOP#011)</span>
+              </h3>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800/40">
+                Hold Period: 5 to 7 Days
+              </span>
+            </div>
+            <p className="text-xs text-slate-300 leading-relaxed">
+              Mandatory samples collected every morning <strong>before the shift opens</strong> to provide legal and scientific defence against foodborne illness claims:
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+              {[
+                {
+                  item: 'Hotpot Broths',
+                  sub: 'Signature Spicy & Bone Broth',
+                  qty: '100mL - 150mL',
+                  container: 'PE Retain Pouch',
+                  storage: '≤4°C (Chilled)',
+                  color: 'border-red-800/60 bg-red-950/30 text-red-200',
+                },
+                {
+                  item: 'Raw Marinated Proteins',
+                  sub: 'US Beef, Angus, Pork, Chicken',
+                  qty: '100 grams',
+                  container: 'Vacuum PE Pouch',
+                  storage: '≤-18°C (Frozen)',
+                  color: 'border-amber-800/60 bg-amber-950/30 text-amber-200',
+                },
+                {
+                  item: 'Proprietary Dipping Sauces',
+                  sub: 'House Special Sauce Blends',
+                  qty: '100 grams',
+                  container: 'Sterile Retain Cup',
+                  storage: '≤4°C (Chilled)',
+                  color: 'border-blue-800/60 bg-blue-950/30 text-blue-200',
+                },
+                {
+                  item: 'Potable & RO Ice/Water',
+                  sub: 'Filtered Water Dispenser & Ice',
+                  qty: '250mL',
+                  container: 'Sterile Retain Bottle',
+                  storage: '≤4°C (Chilled)',
+                  color: 'border-cyan-800/60 bg-cyan-950/30 text-cyan-200',
+                },
+              ].map((sample, idx) => (
+                <div key={idx} className={`p-3.5 rounded-xl border ${sample.color} space-y-1.5`}>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-white">{sample.item}</span>
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-slate-900/90 text-white border border-slate-700">
+                      {sample.qty}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300">{sample.sub}</p>
+                  <div className="pt-1.5 border-t border-slate-800/60 flex items-center justify-between text-[10px]">
+                    <span className="text-slate-400">{sample.container}</span>
+                    <span className="font-semibold text-emerald-400">{sample.storage}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1.5 text-xs text-slate-300">
+              <span className="font-bold text-white block">🏷️ Mandatory Sample Label Format:</span>
+              <div className="font-mono text-[11px] bg-slate-950 p-2.5 rounded-lg border border-slate-800 text-slate-200 space-y-0.5">
+                <div>[Sample Name] - [Batch/Lot #]</div>
+                <div>Date & Time: YYYY-MM-DD | 09:30 AM</div>
+                <div>Collected By: [Staff Name & Designation]</div>
+                <div>Storage Temp: ≤4°C or ≤-18°C</div>
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl space-y-1.5 text-xs text-slate-300">
+              <span className="font-bold text-white block">🔒 Chain of Custody & Disposal:</span>
+              <p className="leading-relaxed">
+                Samples are held in a <strong>dedicated locked QA storage box</strong>. If no complaints arise after <strong>7 days</strong>, samples are doused with sanitizer and safely disposed. If a complaint occurs, samples are delivered to an accredited laboratory under strict chain of custody.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SOP 3: FIFO & FEFO PRECEDENCE (IKQA-SOP#004)
+         ========================================================================= */}
+      {activeSection === 'fefo' && (
+        <div className="space-y-4">
+          <div className="p-3 bg-red-950/40 border border-red-700/50 rounded-xl flex items-start gap-2 text-xs text-red-200">
+            <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <strong className="text-red-300">GOLDEN RULE OF PRECEDENCE:</strong> <strong>FEFO (First-Expiry, First-Out) STRICTLY OVERRIDES FIFO.</strong> An item with an earlier expiration date must always be stocked in front and prepped first, regardless of when it arrived at the store.
+            </div>
+          </div>
+
+          {/* Stocking Motion Diagram */}
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <Repeat className="w-4 h-4 text-emerald-400" />
+              <span>Back-to-Front Stocking Workflow</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-emerald-800/40 space-y-1.5">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700/40">
+                  FRONT OF SHELF (Use First)
+                </span>
+                <h4 className="text-xs font-bold text-white">Nearest Expiry Date</h4>
+                <p className="text-[11px] text-slate-300">
+                  Items expiring soonest (e.g., Oct 24). Readily accessible to cooks and prep cooks.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                  MIDDLE OF SHELF
+                </span>
+                <h4 className="text-xs font-bold text-white">Intermediate Expiry</h4>
+                <p className="text-[11px] text-slate-300">
+                  Items with standard rotation buffer (e.g., Oct 28). Moved forward as front items deplete.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-blue-800/40 space-y-1.5">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-700/40">
+                  BACK OF SHELF (New Stock)
+                </span>
+                <h4 className="text-xs font-bold text-white">Latest Expiry Date</h4>
+                <p className="text-[11px] text-slate-300">
+                  Newly delivered stock (e.g., Nov 15). Loaded from rear; never stacked directly in front of older items.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Near-Expiry Action Matrix */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl space-y-2 text-xs">
+              <span className="font-bold text-white block">⚡ Near-Expiry Action Protocol:</span>
+              <ul className="space-y-1.5 text-slate-300">
+                <li className="flex items-start gap-1.5">
+                  <span className="text-amber-400 font-bold">&lt; 48 Hours:</span>
+                  <span>Apply yellow fluorescent dot sticker. Prioritize for immediate prep into broths or marinades.</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-red-400 font-bold">&lt; 24 Hours:</span>
+                  <span>Alert Kitchen Lead. If not cookable before expiration, log in IQAF-007 and move to waste quarantine.</span>
+                </li>
+                <li className="flex items-start gap-1.5">
+                  <span className="text-red-500 font-bold">Expired:</span>
+                  <span>Strict zero tolerance. NEVER use, relabel, or extend shelf-life. Mechanically deface and discard.</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl space-y-2 text-xs">
+              <span className="font-bold text-white block">📋 Mandatory 4-Point Receiving Tag:</span>
+              <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
+                <div className="p-2 rounded bg-slate-950 border border-slate-800">
+                  <span className="text-slate-400 block text-[9px]">POINT 1</span>
+                  <span className="text-white font-bold">Item Description</span>
+                </div>
+                <div className="p-2 rounded bg-slate-950 border border-slate-800">
+                  <span className="text-slate-400 block text-[9px]">POINT 2</span>
+                  <span className="text-white font-bold">Intake Date / Time</span>
+                </div>
+                <div className="p-2 rounded bg-slate-950 border border-slate-800">
+                  <span className="text-slate-400 block text-[9px]">POINT 3</span>
+                  <span className="text-amber-400 font-bold">Expiration Date</span>
+                </div>
+                <div className="p-2 rounded bg-slate-950 border border-slate-800">
+                  <span className="text-slate-400 block text-[9px]">POINT 4</span>
+                  <span className="text-cyan-400 font-bold">Supplier Lot #</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SOP 4: WIRE SLICER & LUNCHEON MEAT (IKQA-SOP#012)
+         ========================================================================= */}
+      {activeSection === 'slicer' && (
+        <div className="space-y-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Scissors className="w-4 h-4 text-amber-400" />
+                <span>Portioning Luncheon Meat with Wire Slicer (IKQA-SOP#012)</span>
+              </h3>
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-800/40">
+                Target: 0.8cm - 1.0cm
+              </span>
+            </div>
+
+            {/* Thickness Gauge Visual */}
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="space-y-1 text-center sm:text-left">
+                <span className="text-xs font-bold text-white block">Standardized Portioning Gauge</span>
+                <p className="text-[11px] text-slate-300">
+                  Uniform slicing ensures even cooking in the hotpot and protects plate presentation margins.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1.5 font-mono text-center">
+                  <div className="w-8 h-12 rounded bg-amber-800/80 border-2 border-amber-400 flex items-center justify-center font-bold text-xs text-white shadow">
+                    8mm
+                  </div>
+                  <span className="text-slate-400 text-xs">to</span>
+                  <div className="w-10 h-12 rounded bg-amber-800/80 border-2 border-amber-400 flex items-center justify-center font-bold text-xs text-white shadow">
+                    10mm
+                  </div>
+                </div>
+                <div className="text-[11px] text-slate-300 border-l border-slate-800 pl-3">
+                  <span className="text-emerald-400 font-bold block">✓ Optimal Hotpot Dip</span>
+                  <span>Cooks evenly in boiling broth in 60-90s</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Pre-Op & Sanitization Checklist */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-2 text-xs">
+                <span className="font-bold text-cyan-300 block">🔍 Pre-Operational Inspection:</span>
+                <ul className="space-y-1.5 text-slate-300">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-cyan-400 font-bold">•</span>
+                    <span><strong>Wire Tension:</strong> Check all stainless cutting wires for slack, fraying, or rust.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-cyan-400 font-bold">•</span>
+                    <span><strong>Frame Alignment:</strong> Verify frame hinges are snug with no loose screws or wobbling.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-cyan-400 font-bold">•</span>
+                    <span><strong>Pre-Sanitized:</strong> Ensure wire slicer was sanitized prior to shift contact.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="p-3.5 bg-red-950/40 border border-red-700/50 rounded-xl space-y-2 text-xs text-red-200">
+                <span className="font-bold text-red-300 block">🚨 Wire Break Emergency Protocol:</span>
+                <ul className="space-y-1.5">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-red-400 font-bold">1.</span>
+                    <span><strong>Immediate Stop:</strong> Halt portioning instantly if any wire snaps or loosens.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-red-400 font-bold">2.</span>
+                    <span><strong>Quarantine Batch:</strong> Discard the entire current batch of sliced meat due to metal fragment risk.</span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-red-400 font-bold">3.</span>
+                    <span><strong>Tag Out:</strong> Affix "OUT OF SERVICE" tag and replace cutting wire cartridge.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+              <span>⏱️ <strong>Sanitization Cycle:</strong> Complete wash, rinse, and 100-200ppm chlorine sanitization every <strong>4 hours</strong>.</span>
+              <span className="font-mono text-emerald-400 text-[10px]">3-Compartment Sink</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SOP 5: INTEGRATED PEST MANAGEMENT (IKQA-SOP#003 & IKQAP#006)
+         ========================================================================= */}
+      {activeSection === 'pest' && (
+        <div className="space-y-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <Bug className="w-4 h-4 text-emerald-400" />
+              <span>IPM 3 Lines of Defense (IKQA-SOP#003)</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+                <span className="text-[10px] uppercase font-bold text-emerald-400 block tracking-wider">
+                  Line 1: Exclusion
+                </span>
+                <h4 className="text-xs font-bold text-white">Physical Barriers</h4>
+                <ul className="space-y-1 text-slate-300 text-[11px]">
+                  <li>• <strong>Door Sweeps:</strong> Maximum <strong>6mm (0.25in)</strong> gap under exterior doors.</li>
+                  <li>• <strong>Window Screens:</strong> 16-mesh minimum on all openable kitchen windows.</li>
+                  <li>• <strong>Air Curtains:</strong> MUST run continuously during goods intake.</li>
+                </ul>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+                <span className="text-[10px] uppercase font-bold text-cyan-400 block tracking-wider">
+                  Line 2: Restriction
+                </span>
+                <h4 className="text-xs font-bold text-white">Clearance Distances</h4>
+                <ul className="space-y-1 text-slate-300 text-[11px]">
+                  <li>• <strong>Floor Clearance:</strong> Minimum <strong>15cm (6in)</strong> off the floor.</li>
+                  <li>• <strong>Wall Clearance:</strong> Minimum <strong>45cm (18in)</strong> away from perimeter walls.</li>
+                  <li>• <strong>Zero Standing Water:</strong> Squeegee drains dry after every rush.</li>
+                </ul>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-2 text-xs">
+                <span className="text-[10px] uppercase font-bold text-amber-400 block tracking-wider">
+                  Line 3: Elimination
+                </span>
+                <h4 className="text-xs font-bold text-white">Traps & Certified PCO</h4>
+                <ul className="space-y-1 text-slate-300 text-[11px]">
+                  <li>• <strong>EFK Bug Zappers:</strong> Placed <strong>2 to 3 meters</strong> away from exposed food.</li>
+                  <li>• <strong>No Toxic Baits:</strong> Open chemical bait prohibited in food prep lines.</li>
+                  <li>• <strong>Monthly PCO:</strong> Certified pest control technician audit & flush.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3.5 bg-red-950/40 border border-red-700/50 rounded-xl text-xs text-red-200 flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <strong className="text-red-300">PEST SIGHTING ACTION:</strong> Log the exact location, time, and pest species in the <strong>IQAF-PST Pest Sighting Log</strong> within 15 minutes. Cordon off the affected storage zone, discard exposed unpackaged foods, and notify the QA Specialist immediately.
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SOP 6: WASTE MANAGEMENT & REJECT PULVERIZATION (IKQA-SOP#009)
+         ========================================================================= */}
+      {activeSection === 'waste' && (
+        <div className="space-y-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <Trash2 className="w-4 h-4 text-emerald-400" />
+              <span>Color-Coded Waste Segregation (RA 9003 & IKQA-SOP#009)</span>
+            </h3>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+              <div className="p-3 rounded-xl bg-slate-950 border border-emerald-800/50 space-y-1">
+                <span className="w-3.5 h-3.5 rounded-full bg-emerald-500 inline-block" />
+                <h4 className="text-xs font-bold text-white">🟢 Green Bin</h4>
+                <span className="text-[10px] text-emerald-300 font-bold block">Biodegradable</span>
+                <p className="text-[11px] text-slate-400">Vegetable trimmings, cooked hotpot broth residue, food scraps.</p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-950 border border-blue-800/50 space-y-1">
+                <span className="w-3.5 h-3.5 rounded-full bg-blue-500 inline-block" />
+                <h4 className="text-xs font-bold text-white">🔵 Blue Bin</h4>
+                <span className="text-[10px] text-blue-300 font-bold block">Recyclable</span>
+                <p className="text-[11px] text-slate-400">Clean cardboard, beverage cans, plastic sauce jugs (rinsed).</p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-950 border border-slate-700/50 space-y-1">
+                <span className="w-3.5 h-3.5 rounded-full bg-slate-400 inline-block" />
+                <h4 className="text-xs font-bold text-white">⚫ Black Bin</h4>
+                <span className="text-[10px] text-slate-300 font-bold block">Residual / General</span>
+                <p className="text-[11px] text-slate-400">Soiled wrappers, used napkins, single-use sanitary towels.</p>
+              </div>
+
+              <div className="p-3 rounded-xl bg-slate-950 border border-amber-800/50 space-y-1">
+                <span className="w-3.5 h-3.5 rounded-full bg-yellow-400 inline-block" />
+                <h4 className="text-xs font-bold text-white">🟡 Yellow Bin</h4>
+                <span className="text-[10px] text-amber-300 font-bold block">Hazardous / Special</span>
+                <p className="text-[11px] text-slate-400">Chemical bottles, expired sanitizer test strips, broken glass.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Rejection Mechanical Destruction Protocol */}
+          <div className="p-4 bg-red-950/40 border border-red-700/50 rounded-2xl space-y-2 text-xs">
+            <h4 className="text-xs font-bold text-red-300 uppercase tracking-wide flex items-center gap-1.5">
+              <ShieldAlert className="w-4 h-4 text-red-400" />
+              <span>Mandatory Food Reject Pulverization Protocol</span>
+            </h4>
+            <p className="text-slate-200 leading-relaxed">
+              To prevent illegal salvaging, resale, or pilferage of rejected food goods:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-slate-200 pt-1">
+              <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800">
+                <strong className="text-amber-400 block mb-0.5">1. Mechanically Crush</strong>
+                <span>Puncture, cut, or pulverize spoiled or recalled food products.</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800">
+                <strong className="text-cyan-400 block mb-0.5">2. Douse with Sanitizer</strong>
+                <span>Spray with colored disinfectant to render it 100% inedible.</span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-slate-900/90 border border-slate-800">
+                <strong className="text-red-400 block mb-0.5">3. Deface Branding</strong>
+                <span>Slash through company logo, barcodes, and cartons with permanent markers.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SOP 7: HYGIENE & BARE BELOW ELBOWS (IKQA-SOP#002 & #008)
+         ========================================================================= */}
+      {activeSection === 'hygiene_effects' && (
+        <div className="space-y-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <UserCheck className="w-4 h-4 text-cyan-400" />
+              <span>Personnel Hygiene & Bare Below Elbows Standards</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-lg">👔</span>
+                <h4 className="text-xs font-bold text-white">Bare Below Elbows</h4>
+                <p className="text-[11px] text-slate-400">
+                  Zero wristwatches, fitness trackers, rings, or bracelets. (One plain smooth wedding band allowed).
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-lg">🪒</span>
+                <h4 className="text-xs font-bold text-white">Beard Snood Rule</h4>
+                <p className="text-[11px] text-slate-400">
+                  Facial hair longer than <strong>1.25cm (0.5 inch)</strong> must be 100% contained within an approved beard snood.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1">
+                <span className="text-lg">💅</span>
+                <h4 className="text-xs font-bold text-white">Nails & Cosmetics</h4>
+                <p className="text-[11px] text-slate-400">
+                  Short, clean, unpolished nails. False nails, false eyelashes, and loose glitter are strictly prohibited.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-red-800/40 space-y-1">
+                <span className="text-lg">📵</span>
+                <h4 className="text-xs font-bold text-red-300">Mobile Phone Ban</h4>
+                <p className="text-[11px] text-slate-400">
+                  Personal cellphones are strictly barred from active prep and cooking lines (high pathogen vector).
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3.5 bg-slate-900 border border-slate-800 rounded-xl space-y-2 text-xs text-slate-300">
+            <span className="font-bold text-white block">🔒 Staff Locker & Personal Items Protocol (IKQA-SOP#008):</span>
+            <p className="leading-relaxed">
+              All street clothing, jackets, bags, and medication must remain secured inside designated staff lockers. Personal water tumblers must be transparent, sealable, and kept exclusively at designated employee hydration stations outside the active food prep perimeter.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          SOP 8: RECALL & TRACEABILITY (IKQA-SOP#005 & #007)
+         ========================================================================= */}
+      {activeSection === 'recall' && (
+        <div className="space-y-4">
+          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-red-400" />
+              <span>Traceability & Product Recall Mandate (IKQA-SOP#005)</span>
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                <span className="text-[10px] uppercase font-bold text-cyan-400 block tracking-wider">
+                  2-Hour Target
+                </span>
+                <h4 className="text-xs font-bold text-white">One Step Back</h4>
+                <p className="text-[11px] text-slate-300">
+                  Identify supplier name, PO number, delivery invoice, intake batch, and delivery vehicle license in &lt;2 hours.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800 space-y-1.5">
+                <span className="text-[10px] uppercase font-bold text-amber-400 block tracking-wider">
+                  2-Hour Target
+                </span>
+                <h4 className="text-xs font-bold text-white">One Step Forward</h4>
+                <p className="text-[11px] text-slate-300">
+                  Trace store dispatches, cold storage location, and table POS transaction records in &lt;2 hours.
+                </p>
+              </div>
+
+              <div className="p-3.5 rounded-xl bg-slate-950 border border-red-800/50 space-y-1.5">
+                <span className="text-[10px] uppercase font-bold text-red-400 block tracking-wider">
+                  Mock Recall
+                </span>
+                <h4 className="text-xs font-bold text-white">4-Hour Drill</h4>
+                <p className="text-[11px] text-slate-300">
+                  Bi-annual unannounced mock drills must achieve 100% reconciliation of target inventory in &lt;4 hours.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3.5 bg-red-950/40 border border-red-700/50 rounded-xl space-y-1.5 text-xs text-red-200">
+            <span className="font-bold text-red-300 block">🛑 Quarantine Cage Protocol:</span>
+            <p className="leading-relaxed">
+              Suspect recalled inventory must immediately be relocated to the locked Quarantine Cage, physically tagged with high-visibility RED tags stamped <strong>"HOLD - DO NOT USE / FOR RECALL ONLY"</strong>, and documented in the Recall Logbook.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          POLICY 1: TOWEL MANAGEMENT MATRIX (IKQAP#015)
+         ========================================================================= */}
       {activeSection === 'towels' && (
         <div className="space-y-3">
           <div className="p-3 bg-red-950/40 border border-red-700/50 rounded-xl flex items-start gap-2 text-xs text-red-200">
@@ -67,7 +854,7 @@ export const QuickReferenceView: React.FC = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {[
               {
                 color: 'White',
@@ -143,7 +930,9 @@ export const QuickReferenceView: React.FC = () => {
         </div>
       )}
 
-      {/* SECTION 2: CUTTING BOARDS & SERVING PLATES */}
+      {/* =========================================================================
+          POLICY 2 & SOP: CUTTING BOARDS & SERVING PLATES (IKQA-SOP#010)
+         ========================================================================= */}
       {activeSection === 'boards' && (
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
@@ -228,10 +1017,11 @@ export const QuickReferenceView: React.FC = () => {
         </div>
       )}
 
-      {/* SECTION 3: TEMPERATURES & COLD CHAIN */}
+      {/* =========================================================================
+          POLICY 3: TEMPERATURES & COLD CHAIN (IKQAP#001 & #003)
+         ========================================================================= */}
       {activeSection === 'temperatures' && (
         <div className="space-y-4">
-          {/* Critical Thresholds */}
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Thermometer className="w-4 h-4 text-cyan-400" />
@@ -265,7 +1055,6 @@ export const QuickReferenceView: React.FC = () => {
             </div>
           </div>
 
-          {/* Time Rules */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-1.5">
               <div className="flex items-center gap-2">
@@ -290,7 +1079,9 @@ export const QuickReferenceView: React.FC = () => {
         </div>
       )}
 
-      {/* SECTION 4: BIG 9 ALLERGENS */}
+      {/* =========================================================================
+          POLICY 4: BIG 9 ALLERGENS (IKQAP#004)
+         ========================================================================= */}
       {activeSection === 'allergens' && (
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
@@ -346,7 +1137,9 @@ export const QuickReferenceView: React.FC = () => {
         </div>
       )}
 
-      {/* SECTION 5: 5S STORAGE HIERARCHY */}
+      {/* =========================================================================
+          POLICY 5: 5S STORAGE HIERARCHY (IKQAP#011)
+         ========================================================================= */}
       {activeSection === 'storage' && (
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
@@ -395,7 +1188,9 @@ export const QuickReferenceView: React.FC = () => {
         </div>
       )}
 
-      {/* SECTION 6: CALIBRATION TOLERANCES */}
+      {/* =========================================================================
+          POLICY 6: CALIBRATION TOLERANCES (IKQAP#020)
+         ========================================================================= */}
       {activeSection === 'calibration' && (
         <div className="space-y-4">
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">

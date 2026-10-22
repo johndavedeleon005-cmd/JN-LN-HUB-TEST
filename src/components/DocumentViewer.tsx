@@ -7,7 +7,9 @@ import {
   Bookmark,
   CheckCircle2,
   AlertTriangle,
-  Download,
+  Lock,
+  ShieldAlert,
+  Eye,
   ExternalLink,
   Play,
   Pause,
@@ -19,8 +21,13 @@ import {
   Flame,
   Share2,
   Check,
+  Store,
+  BookOpen,
+  Award,
 } from 'lucide-react';
 import { TTSService } from '../services/ttsService';
+import { StoreDocumentLockModal } from './StoreDocumentLockModal';
+import { TrainingCertificateModal } from './TrainingCertificateModal';
 
 interface DocumentViewerProps {
   doc: FoodSafetyDoc;
@@ -30,6 +37,8 @@ interface DocumentViewerProps {
   isRead: boolean;
   onToggleRead: (id: string) => void;
   staffName: string;
+  staffPosition?: string;
+  staffBranch?: string;
   onOpenPdfModal: (doc: FoodSafetyDoc) => void;
 }
 
@@ -41,6 +50,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   isRead,
   onToggleRead,
   staffName,
+  staffPosition = 'Kitchen Shift Lead',
+  staffBranch = 'Jiangnan Hotpot - SM Mall of Asia',
   onOpenPdfModal,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'text' | 'pdf' | 'quiz' | 'signatories'>('text');
@@ -53,10 +64,12 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
   const [ttsError, setTtsError] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Quiz state
+  // Quiz & Certificate state
   const [quizAnswers, setQuizAnswers] = useState<Record<number, number>>({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [isCertModalOpen, setIsCertModalOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+  const [isLockModalOpen, setIsLockModalOpen] = useState(false);
 
   // Cleanup audio on unmount or doc change
   useEffect(() => {
@@ -189,19 +202,38 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
             <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-amber-400' : ''}`} />
           </button>
 
-          {/* PDF Modal */}
+          {/* Locked Original Document Button */}
           <button
-            onClick={() => onOpenPdfModal(doc)}
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-red-950/80 hover:bg-red-900 text-red-200 border border-red-800/50 text-xs font-semibold active:scale-95 transition-all"
-            title="Open Original PDF"
+            onClick={() => {
+              setIsLockModalOpen(true);
+              onOpenPdfModal(doc);
+            }}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-950/40 hover:bg-amber-900/60 text-amber-300 border border-amber-800/60 text-xs font-semibold active:scale-95 transition-all shadow-sm"
+            title="Actual document viewing is via store documents"
           >
-            <FileText className="w-4 h-4 text-red-400" />
-            <span className="hidden sm:inline">PDF</span>
+            <Lock className="w-3.5 h-3.5 text-amber-400" />
+            <span className="hidden sm:inline">Original Doc</span>
+            <span className="text-[10px] font-mono px-1 py-0.2 rounded bg-amber-900/60 border border-amber-700/60">
+              Locked
+            </span>
           </button>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-4 space-y-4">
+        {/* Strictly Confidential Security Banner */}
+        <div className="bg-gradient-to-r from-red-950/80 via-slate-900 to-red-950/80 border border-red-700/60 rounded-xl px-3.5 py-2 flex items-center justify-between text-xs text-red-200 shadow-sm select-none">
+          <div className="flex items-center gap-2">
+            <Lock className="w-4 h-4 text-red-400 flex-shrink-0 animate-pulse" />
+            <span className="font-bold tracking-tight text-[11px] sm:text-xs">
+              CONFIDENTIAL & PROPRIETARY • Imperial Kitchen Group Inc.
+            </span>
+          </div>
+          <span className="text-[10px] text-red-300 font-mono font-semibold hidden sm:inline px-2 py-0.5 rounded bg-red-950/60 border border-red-800/40">
+            Internal Staff Use Only • No Download / Copying
+          </span>
+        </div>
+
         {/* Official Document Header Badge */}
         <div className="bg-gradient-to-br from-slate-900 via-slate-900/90 to-red-950/30 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-lg relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-red-600/5 rounded-full blur-2xl pointer-events-none" />
@@ -344,15 +376,18 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           </button>
 
           <button
-            onClick={() => setActiveSubTab('pdf')}
-            className={`flex-1 min-w-[100px] py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-all ${
+            onClick={() => {
+              setActiveSubTab('pdf');
+              setIsLockModalOpen(true);
+            }}
+            className={`flex-1 min-w-[105px] py-2 px-3 rounded-lg font-semibold flex items-center justify-center gap-1.5 transition-all ${
               activeSubTab === 'pdf'
-                ? 'bg-red-600 text-white shadow-sm'
+                ? 'bg-amber-600 text-slate-950 shadow-sm font-bold'
                 : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
             }`}
           >
-            <Download className="w-3.5 h-3.5" />
-            <span>Original PDF</span>
+            <Lock className="w-3.5 h-3.5 text-amber-400" />
+            <span>Official PDF 🔒</span>
           </button>
 
           <button
@@ -542,48 +577,59 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           </div>
         )}
 
-        {/* SUBTAB 2: Original Official PDF Preview */}
+        {/* SUBTAB 2: Original Official PDF Preview - LOCKED */}
         {activeSubTab === 'pdf' && (
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-4">
-            <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-slate-800">
-              <div>
-                <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-red-400" />
-                  <span>Official Signed PDF Document</span>
-                </h3>
-                <p className="text-xs text-slate-400">
-                  Direct official upload from Imperial Kitchen Group Inc.
-                </p>
-              </div>
+          <div className="bg-slate-900 border-2 border-amber-800/50 rounded-2xl p-6 sm:p-8 space-y-6 text-center shadow-xl relative overflow-hidden">
+            <div className="w-16 h-16 mx-auto rounded-3xl bg-amber-500/20 border-2 border-amber-500/40 flex items-center justify-center shadow-lg shadow-amber-950/60 ring-1 ring-amber-400/30">
+              <Lock className="w-8 h-8 text-amber-400" />
+            </div>
 
-              <div className="flex items-center gap-2">
-                <a
-                  href={doc.pdfUrl}
-                  download
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition-all"
-                >
-                  <Download className="w-3.5 h-3.5 text-slate-300" />
-                  <span>Download</span>
-                </a>
-                <a
-                  href={doc.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-xs font-semibold transition-all shadow-md"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                  <span>Open Fullscreen</span>
-                </a>
+            <div className="space-y-2.5 max-w-lg mx-auto">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-800/60 text-[11px] font-mono font-bold uppercase tracking-wider">
+                <Store className="w-3.5 h-3.5 text-amber-400" />
+                <span>Feature Locked • Store Document Policy</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl font-black text-amber-300 tracking-tight">
+                &ldquo;Actual document viewing is via store documents&rdquo;
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                Direct digital display and downloading of the original source document for{' '}
+                <strong className="text-white font-mono">{doc.code}: {doc.title}</strong> has been locked to protect proprietary information.
+              </p>
+            </div>
+
+            {/* Step-by-step notice card */}
+            <div className="bg-slate-950/90 border border-slate-800 rounded-2xl p-4 sm:p-5 max-w-lg mx-auto text-left space-y-2.5 shadow-inner">
+              <div className="flex items-center gap-2 text-xs font-bold text-amber-400">
+                <ShieldAlert className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <span>Official Physical Copy Location:</span>
+              </div>
+              <p className="text-slate-300 leading-relaxed text-xs">
+                Official signed, stamped, and verified original copies are maintained on-site in the{' '}
+                <strong className="text-white">Store Quality Assurance Compliance Binder</strong> kept inside the Store Manager&apos;s office.
+              </p>
+              <div className="pt-1 text-[11px] text-slate-400 flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block" />
+                <span>Contact your Shift Supervisor or QA Officer for physical binder access.</span>
               </div>
             </div>
 
-            {/* Embedded PDF iframe */}
-            <div className="w-full h-[650px] bg-slate-950 rounded-xl overflow-hidden border border-slate-800 relative">
-              <iframe
-                src={`${doc.pdfUrl}#toolbar=1&navpanes=0&scrollbar=1`}
-                className="w-full h-full border-0"
-                title={`PDF preview of ${doc.code}`}
-              />
+            <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+              <button
+                onClick={() => setActiveSubTab('text')}
+                className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white font-bold text-xs shadow-md active:scale-95 transition-all inline-flex items-center gap-2"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span>Return to Policy Text & Rules</span>
+              </button>
+
+              <button
+                onClick={() => setIsLockModalOpen(true)}
+                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-800/40 font-bold text-xs active:scale-95 transition-all inline-flex items-center gap-1.5"
+              >
+                <Lock className="w-3.5 h-3.5" />
+                <span>View Lock Notice</span>
+              </button>
             </div>
           </div>
         )}
@@ -672,16 +718,25 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
                       Submit Answers
                     </button>
                   ) : (
-                    <div className="flex items-center gap-3">
-                      <div className="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-bold">
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <div className="px-3 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-xs font-bold text-white">
                         Score: {calculateQuizScore().score} / {calculateQuizScore().total}
                       </div>
+                      {calculateQuizScore().score >= Math.ceil(calculateQuizScore().total * 0.7) && (
+                        <button
+                          onClick={() => setIsCertModalOpen(true)}
+                          className="px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-600 to-red-600 hover:from-amber-400 hover:to-red-500 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-md active:scale-95 transition-all"
+                        >
+                          <Award className="w-3.5 h-3.5 text-slate-950" />
+                          <span>View Training Certificate</span>
+                        </button>
+                      )}
                       <button
                         onClick={() => {
                           setQuizSubmitted(false);
                           setQuizAnswers({});
                         }}
-                        className="text-xs text-red-400 hover:underline font-semibold flex items-center gap-1"
+                        className="text-xs text-red-400 hover:underline font-semibold flex items-center gap-1 ml-auto"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
                         <span>Retake Quiz</span>
@@ -769,6 +824,26 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({
           </div>
         )}
       </div>
+
+      {/* Store Document Lock Notice Modal */}
+      <StoreDocumentLockModal
+        isOpen={isLockModalOpen}
+        doc={doc}
+        onClose={() => setIsLockModalOpen(false)}
+        onReadDigitalText={() => setActiveSubTab('text')}
+      />
+
+      {/* Official System Training Certificate Modal */}
+      <TrainingCertificateModal
+        isOpen={isCertModalOpen}
+        onClose={() => setIsCertModalOpen(false)}
+        staffName={staffName}
+        staffPosition={staffPosition}
+        staffBranch={staffBranch}
+        quizTitle={`${doc.code}: ${doc.title}`}
+        score={calculateQuizScore().score}
+        totalQuestions={calculateQuizScore().total}
+      />
     </div>
   );
 };
