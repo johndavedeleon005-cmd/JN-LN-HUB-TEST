@@ -63,8 +63,12 @@ export const AndroidHeader: React.FC<AndroidHeaderProps> = ({
           className={`flex items-center gap-2.5 min-w-0 ${onOpenWelcomeModal ? 'cursor-pointer hover:opacity-90 transition-opacity' : ''}`}
           title="Click to view Learning and Development Training Hub & Team Info"
         >
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-600 via-red-700 to-amber-700 flex items-center justify-center shadow-lg shadow-red-950/50 ring-1 ring-red-400/30 flex-shrink-0">
-            <Flame className="w-5 h-5 text-amber-200 fill-amber-200" />
+          <div className="w-9 h-9 rounded-xl overflow-hidden bg-black flex items-center justify-center shadow-lg shadow-red-950/60 ring-1 ring-red-500/50 flex-shrink-0">
+            <img 
+              src="./assets/aistudio/JN_HOTPOT_LOGO_d76d212e.webp" 
+              alt="Jiangnan Hotpot Logo" 
+              className="w-full h-full object-cover" 
+            />
           </div>
           <div className="min-w-0">
             <div className="flex items-center gap-1.5">

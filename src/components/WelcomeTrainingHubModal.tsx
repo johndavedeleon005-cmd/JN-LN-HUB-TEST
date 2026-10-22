@@ -81,14 +81,23 @@ export const WelcomeTrainingHubModal: React.FC<WelcomeTrainingHubModalProps> = (
             </button>
           )}
 
-          <div className="flex items-center gap-2 mb-2">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-500 text-slate-950 shadow-sm flex items-center gap-1">
-              <Flame className="w-3.5 h-3.5 fill-current" />
-              Jiangnan Hotpot • Imperial Kitchen Group
-            </span>
-            <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-red-950/80 text-red-200 border border-red-700/40">
-              Internal Portal
-            </span>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl overflow-hidden bg-black ring-1 ring-red-400/50 shadow-md flex-shrink-0">
+              <img 
+                src="./assets/aistudio/JN_HOTPOT_LOGO_d76d212e.webp" 
+                alt="Jiangnan Hotpot Logo" 
+                className="w-full h-full object-cover" 
+              />
+            </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-500 text-slate-950 shadow-sm flex items-center gap-1">
+                <Flame className="w-3.5 h-3.5 fill-current" />
+                Jiangnan Hotpot • Imperial Kitchen Group
+              </span>
+              <span className="px-2 py-0.5 rounded-full text-[11px] font-medium bg-red-950/80 text-red-200 border border-red-700/40">
+                Internal Portal
+              </span>
+            </div>
           </div>
 
           <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">

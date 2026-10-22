@@ -311,17 +311,26 @@ export default function App() {
                   {/* Hero compliance banner */}
                   <div className="bg-gradient-to-br from-red-950 via-slate-900 to-amber-950/60 border border-red-800/40 rounded-3xl p-4 sm:p-5 shadow-xl relative overflow-hidden">
                     <div className="flex items-center justify-between gap-3">
-                      <div className="space-y-1">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-900/60 text-red-200 border border-red-700/60 text-[10px] font-bold">
-                          <Flame className="w-3 h-3 text-amber-400 fill-amber-400" />
-                          Imperial Kitchen Group Inc.
-                        </span>
-                        <h1 className="text-lg sm:text-xl font-black text-white tracking-tight">
-                          Learning and Development Training Hub
-                        </h1>
-                        <p className="text-xs text-slate-300 max-w-md leading-relaxed">
-                          Official compliance standards for Jiangnan Hotpot restaurants, commissaries, and logistics.
-                        </p>
+                      <div className="flex items-start gap-3">
+                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl overflow-hidden bg-black ring-1 ring-red-500/50 shadow-xl flex-shrink-0 mt-0.5">
+                          <img 
+                            src="./assets/aistudio/JN_HOTPOT_LOGO_d76d212e.webp" 
+                            alt="Jiangnan Hotpot Logo" 
+                            className="w-full h-full object-cover" 
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-red-900/60 text-red-200 border border-red-700/60 text-[10px] font-bold">
+                            <Flame className="w-3 h-3 text-amber-400 fill-amber-400" />
+                            Imperial Kitchen Group Inc.
+                          </span>
+                          <h1 className="text-lg sm:text-xl font-black text-white tracking-tight">
+                            Learning and Development Training Hub
+                          </h1>
+                          <p className="text-xs text-slate-300 max-w-md leading-relaxed">
+                            Official compliance standards for Jiangnan Hotpot restaurants, commissaries, and logistics.
+                          </p>
+                        </div>
                       </div>
 
                       <button
