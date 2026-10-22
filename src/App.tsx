@@ -82,13 +82,25 @@ export default function App() {
 
   // Staff Info: Name, Position & Branch
   const [staffName, setStaffName] = useState(() => {
-    return localStorage.getItem('ikqa_staff_name') || 'Maria Santos';
+    try {
+      return localStorage.getItem('ikqa_staff_name') || 'Maria Santos';
+    } catch {
+      return 'Maria Santos';
+    }
   });
   const [staffPosition, setStaffPosition] = useState(() => {
-    return localStorage.getItem('ikqa_staff_position') || 'Kitchen Shift Lead';
+    try {
+      return localStorage.getItem('ikqa_staff_position') || 'Kitchen Shift Lead';
+    } catch {
+      return 'Kitchen Shift Lead';
+    }
   });
   const [staffBranch, setStaffBranch] = useState(() => {
-    return localStorage.getItem('ikqa_staff_branch') || 'Jiangnan Hotpot - SM Mall of Asia';
+    try {
+      return localStorage.getItem('ikqa_staff_branch') || 'Jiangnan Hotpot - SM Mall of Asia';
+    } catch {
+      return 'Jiangnan Hotpot - SM Mall of Asia';
+    }
   });
 
   // Frame Simulation State (phone frame vs desktop)

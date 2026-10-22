@@ -62,14 +62,26 @@ export const StaffQuizAudit: React.FC<StaffQuizAuditProps> = ({
 
   // Completed timestamp & history persistence
   const [certCompletedAt, setCertCompletedAt] = useState<string>(() => {
-    return localStorage.getItem('ikqa_cert_completed_at') || '';
+    try {
+      return localStorage.getItem('ikqa_cert_completed_at') || '';
+    } catch {
+      return '';
+    }
   });
   const [hasPassedHistory, setHasPassedHistory] = useState<boolean>(() => {
-    return localStorage.getItem('ikqa_has_passed_quiz') === 'true';
+    try {
+      return localStorage.getItem('ikqa_has_passed_quiz') === 'true';
+    } catch {
+      return false;
+    }
   });
   const [lastPassedScore, setLastPassedScore] = useState<number>(() => {
-    const saved = localStorage.getItem('ikqa_last_passed_score');
-    return saved ? parseInt(saved, 10) : 10;
+    try {
+      const saved = localStorage.getItem('ikqa_last_passed_score');
+      return saved ? parseInt(saved, 10) : 10;
+    } catch {
+      return 10;
+    }
   });
 
   const readPercentage = Math.round((readDocIds.length / documents.length) * 100);

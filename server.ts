@@ -1,14 +1,34 @@
 import express from 'express';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
-import { INITIAL_FOOD_SAFETY_DOCUMENTS } from './src/data/foodSafetyDocuments';
 
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+interface DocItem {
+  code: string;
+  title: string;
+  type: string;
+  category: string;
+  revision: number;
+  effectiveDate: string;
+  summary: string;
+  keyTakeaways?: string[];
+  quickRules?: { type: string; title: string; rule: string }[];
+  sections?: { title: string; content: string }[];
+  tables?: { title: string; headers: string[]; rows: any[][] }[];
+  signatories?: { preparedBy?: string; reviewedBy?: string[]; approvedBy?: string };
+  tags?: string[];
+}
+
+// Safe server-side loading of documents catalog (compatible with both Node native ESM and tsx)
+const docsJsonPath = path.join(__dirname, 'src', 'data', 'foodSafetyDocuments.json');
+const INITIAL_FOOD_SAFETY_DOCUMENTS: DocItem[] = JSON.parse(fs.readFileSync(docsJsonPath, 'utf8'));
 
 const app = express();
 const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
@@ -26,12 +46,12 @@ const ai = new GoogleGenAI({
 });
 
 // Build comprehensive grounding catalog for all 33 documents (21 Policies + 12 SOPs)
-const FULL_DOCUMENTS_GROUNDING_BRIEF = INITIAL_FOOD_SAFETY_DOCUMENTS.map((doc) => {
-  const takeaways = (doc.keyTakeaways || []).map((t) => `  * ${t}`).join('\n');
-  const rules = (doc.quickRules || []).map((r) => `  * [${r.type.toUpperCase()}] ${r.title}: ${r.rule}`).join('\n');
-  const sectionsBrief = (doc.sections || []).map((s) => `  - ${s.title}: ${s.content}`).join('\n');
+const FULL_DOCUMENTS_GROUNDING_BRIEF = INITIAL_FOOD_SAFETY_DOCUMENTS.map((doc: DocItem) => {
+  const takeaways = (doc.keyTakeaways || []).map((t: string) => `  * ${t}`).join('\n');
+  const rules = (doc.quickRules || []).map((r: { type: string; title: string; rule: string }) => `  * [${r.type.toUpperCase()}] ${r.title}: ${r.rule}`).join('\n');
+  const sectionsBrief = (doc.sections || []).map((s: { title: string; content: string }) => `  - ${s.title}: ${s.content}`).join('\n');
   const tablesBrief = doc.tables && doc.tables.length > 0
-    ? `  Tables:\n` + doc.tables.map((t) => `    Table "${t.title}": ${t.headers.join(' | ')} -> ${t.rows.map(r => r.join(' / ')).slice(0, 5).join('; ')}`).join('\n')
+    ? `  Tables:\n` + doc.tables.map((t: { title: string; headers: string[]; rows: any[][] }) => `    Table "${t.title}": ${t.headers.join(' | ')} -> ${t.rows.map((r: any[]) => r.join(' / ')).slice(0, 5).join('; ')}`).join('\n')
     : '';
 
   return `### DOCUMENT: ${doc.code} - ${doc.title}
@@ -249,10 +269,10 @@ function getRuleFallbackAnswer(query: string, contextDocTitle?: string, contextD
   }
 
   // 3. Search document titles & summaries for relevant matches
-  const keywordDoc = INITIAL_FOOD_SAFETY_DOCUMENTS.find((d) => {
+  const keywordDoc = INITIAL_FOOD_SAFETY_DOCUMENTS.find((d: DocItem) => {
     const codeMatch = d.code.toLowerCase().includes(q);
     const titleMatch = d.title.toLowerCase().includes(q);
-    const tagMatch = d.tags.some((t) => q.includes(t.toLowerCase()));
+    const tagMatch = (d.tags || []).some((t: string) => q.includes(t.toLowerCase()));
     return codeMatch || titleMatch || tagMatch;
   });
 
