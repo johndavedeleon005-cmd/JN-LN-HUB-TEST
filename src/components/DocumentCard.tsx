@@ -23,6 +23,8 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
 }) => {
   const getCategoryColor = (category: string) => {
     switch (category) {
+      case 'Station Checklists':
+        return 'bg-amber-500/20 text-amber-300 border-amber-500/50';
       case 'Temperature & Cold Chain':
         return 'bg-cyan-950/70 text-cyan-300 border-cyan-800/50';
       case 'Allergens & Health':
@@ -51,6 +53,11 @@ export const DocumentCard: React.FC<DocumentCardProps> = ({
           <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-red-950 text-red-300 border border-red-800/60 shadow-sm">
             {doc.code}
           </span>
+          {doc.type === 'checklist' && (
+            <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500 text-slate-950 shadow-sm">
+              Station Checklist
+            </span>
+          )}
           <span
             className={`text-[10px] font-semibold px-2 py-0.5 rounded-md border ${getCategoryColor(
               doc.category

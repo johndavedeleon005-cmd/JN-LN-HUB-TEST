@@ -43,9 +43,9 @@ export const ComplianceAssistantModal: React.FC<ComplianceAssistantModalProps> =
       role: 'assistant',
       text: `Hello! I am your **L&D Virtual Support** for **Jiangnan Hotpot / Imperial Kitchen Group Inc.**
 
-I am fully grounded across all **34 official documents in file** (RA 10611, 21 Policies: IKQAP#001-#021 & 12 SOPs: IKQA-SOP#001-#012). 
+I am fully grounded across all **35 official documents in file** (Station Checklist **JNLD-CHK-FOH-REC-001**, RA 10611, 21 Policies: IKQAP#001-#021 & 12 SOPs: IKQA-SOP#001-#012). 
 
-${activeDoc ? `Currently viewing: **${activeDoc.code}: ${activeDoc.title}**` : 'Ask any question about temperatures, retention samples, wire slicer safety, or towel codes.'}`,
+${activeDoc ? `Currently viewing: **${activeDoc.code}: ${activeDoc.title}**` : 'Ask any question about the Receptionist Task Checklist, package rates, birthday/senior promos, temperatures, handwashing, or towel codes.'}`,
     },
   ]);
   const [input, setInput] = useState('');
@@ -79,13 +79,13 @@ ${activeDoc ? `Currently viewing: **${activeDoc.code}: ${activeDoc.title}**` : '
   if (!isOpen) return null;
 
   const quickPrompts = [
+    'JNLD-CHK-FOH-REC-001: Receptionist Task Checklist & scripts',
+    'Receptionist: Weekday (₱899) vs Weekend (₱999) & Hotpot-only rates',
+    'Receptionist: Birthday promo (4 vs 5 pax) & Senior 12% VAT rule',
+    'SOP#001: 40-60s Handwashing & Restroom Double Wash',
     'SOP#011: Retention sample rules (100-150mL, 5-7 days)',
-    'SOP#012: Wire slicer inspection & portioning',
-    'SOP#001: Restroom Double Wash method',
-    'SOP#004: FEFO vs FIFO precedence',
     'IKQAP#003: 15-Minute cold chain rule',
     'IKQA-SOP#010: Cutting boards & towel colors',
-    'IKQAP#004: Big 9 Allergens protocol',
   ];
 
   const handleSend = async (questionText?: string) => {

@@ -1,7 +1,8 @@
-export type DocumentType = 'policy' | 'sop' | 'guide';
+export type DocumentType = 'policy' | 'sop' | 'guide' | 'checklist';
 
 export type DepartmentCategory =
   | 'All'
+  | 'Station Checklists'
   | 'Corporate & Quality'
   | 'Temperature & Cold Chain'
   | 'Allergens & Health'

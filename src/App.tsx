@@ -15,6 +15,7 @@ import { ConfidentialityPopup } from './components/ConfidentialityPopup';
 import { StoreDocumentLockModal } from './components/StoreDocumentLockModal';
 import { WelcomeTrainingHubModal } from './components/WelcomeTrainingHubModal';
 import { SpotTheHazardGame } from './components/SpotTheHazardGame';
+import { ReceptionistChecklistGame } from './components/ReceptionistChecklistGame';
 import {
   Search,
   Bookmark,
@@ -30,6 +31,7 @@ import {
   SlidersHorizontal,
   X,
   Gamepad2,
+  ClipboardCheck,
 } from 'lucide-react';
 
 export default function App() {
@@ -54,6 +56,7 @@ export default function App() {
 
   // Bottom navigation tab
   const [activeTab, setActiveTab] = useState<TabType>('library');
+  const [activeGameMode, setActiveGameMode] = useState<'hazard' | 'receptionist'>('receptionist');
 
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState('');
@@ -272,6 +275,7 @@ export default function App() {
   const policiesCount = documents.filter((d) => d.type === 'policy').length;
   const sopsCount = documents.filter((d) => d.type === 'sop').length;
   const guidesCount = documents.filter((d) => d.type === 'guide').length;
+  const checklistsCount = documents.filter((d) => d.type === 'checklist').length;
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex justify-center selection:bg-red-500 selection:text-white">
@@ -362,7 +366,11 @@ export default function App() {
                     </div>
 
                     {/* Quick Metric Pills */}
-                    <div className="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-800/80">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4 pt-3 border-t border-slate-800/80">
+                      <div className="p-2 rounded-xl bg-slate-950/60 text-center border border-amber-500/40">
+                        <span className="text-[10px] uppercase font-bold text-amber-300 block">Station Checklists</span>
+                        <span className="text-sm font-black text-amber-400">{checklistsCount} Active</span>
+                      </div>
                       <div className="p-2 rounded-xl bg-slate-950/60 text-center border border-slate-800/60">
                         <span className="text-[10px] uppercase font-bold text-slate-400 block">Policies</span>
                         <span className="text-sm font-black text-white">{policiesCount} Active</span>
@@ -379,28 +387,59 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* 8-Bit Spot the Hazard Mini-Game Callout Bar */}
-                    <div className="mt-3 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-slate-950/80 p-3 rounded-2xl border border-amber-500/40">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-center shrink-0">
-                          <Gamepad2 className="w-5 h-5 text-amber-400" />
+                    {/* Interactive Training Games Callout Bar (Receptionist Station Checklist + 8-Bit Kitchen Safety) */}
+                    <div className="mt-3 pt-3 border-t border-slate-800/80 grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <div className="flex items-center justify-between gap-2.5 bg-slate-950/90 p-3 rounded-2xl border border-amber-500/50">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-center shrink-0">
+                            <ClipboardCheck className="w-5 h-5 text-amber-400" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="font-mono text-[10px] font-black text-amber-400 uppercase block truncate">
+                              NEW · STATION CHECKLIST GAME
+                            </span>
+                            <p className="text-xs font-bold text-white truncate">
+                              Receptionist Task Simulator
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <span className="font-mono text-[10px] font-black text-amber-400 uppercase block">
-                            8-BIT ARCADE TRAINING · WITH CHIPTUNE MUSIC
-                          </span>
-                          <p className="text-xs font-bold text-white">
-                            Spot the Hazard: Hotpot Kitchen Safety Mini-Game
-                          </p>
-                        </div>
+                        <button
+                          onClick={() => {
+                            setActiveGameMode('receptionist');
+                            setActiveTab('game');
+                          }}
+                          className="px-3 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono font-black text-[11px] border-2 border-amber-200 shadow-[0_3px_0_#92400e] active:translate-y-0.5 transition-all flex items-center justify-center gap-1 whitespace-nowrap shrink-0 cursor-pointer"
+                        >
+                          <ClipboardCheck className="w-3.5 h-3.5" />
+                          <span>PLAY FOH SIM</span>
+                        </button>
                       </div>
-                      <button
-                        onClick={() => setActiveTab('game')}
-                        className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono font-black text-xs border-2 border-amber-200 shadow-[0_3px_0_#92400e] active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
-                      >
-                        <Gamepad2 className="w-4 h-4" />
-                        <span>PLAY 8-BIT GAME</span>
-                      </button>
+
+                      <div className="flex items-center justify-between gap-2.5 bg-slate-950/80 p-3 rounded-2xl border border-red-500/40">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-9 h-9 rounded-xl bg-red-500/20 border border-red-400/50 flex items-center justify-center shrink-0">
+                            <Gamepad2 className="w-5 h-5 text-red-400" />
+                          </div>
+                          <div className="min-w-0">
+                            <span className="font-mono text-[10px] font-black text-red-400 uppercase block truncate">
+                              8-BIT KITCHEN SAFETY ARCADE
+                            </span>
+                            <p className="text-xs font-bold text-white truncate">
+                              Spot the Hazard: BOH Kitchen
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setActiveGameMode('hazard');
+                            setActiveTab('game');
+                          }}
+                          className="px-3 py-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-mono font-black text-[11px] border-2 border-red-300 shadow-[0_3px_0_#7f1d1d] active:translate-y-0.5 transition-all flex items-center justify-center gap-1 whitespace-nowrap shrink-0 cursor-pointer"
+                        >
+                          <Gamepad2 className="w-3.5 h-3.5" />
+                          <span>PLAY 8-BIT</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -415,6 +454,18 @@ export default function App() {
                       }`}
                     >
                       All Documents ({documents.length})
+                    </button>
+
+                    <button
+                      onClick={() => setSelectedType('checklist')}
+                      className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                        selectedType === 'checklist'
+                          ? 'bg-amber-500 text-slate-950 shadow-md'
+                          : 'bg-amber-950/50 text-amber-300 hover:bg-amber-900/60 border border-amber-500/40'
+                      }`}
+                    >
+                      <ClipboardCheck className="w-3.5 h-3.5" />
+                      <span>Station Checklists ({checklistsCount})</span>
                     </button>
 
                     <button
@@ -455,6 +506,7 @@ export default function App() {
                   <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
                     {[
                       'All',
+                      'Station Checklists',
                       'Temperature & Cold Chain',
                       'Sanitation & Pest',
                       'Allergens & Health',
@@ -605,15 +657,53 @@ export default function App() {
               {/* TAB 2: QUICK REFERENCE */}
               {activeTab === 'quickref' && <QuickReferenceView />}
 
-              {/* TAB: 8-BIT SPOT THE HAZARD MINI-GAME */}
+              {/* TAB: TRAINING GAMES (STATION CHECKLIST GAME + 8-BIT SPOT THE HAZARD) */}
               {activeTab === 'game' && (
-                <SpotTheHazardGame
-                  documents={documents}
-                  staffName={staffName}
-                  staffPosition={staffPosition}
-                  staffBranch={staffBranch}
-                  onOpenDoc={(d) => handleInitiateViewDoc(d)}
-                />
+                <div className="space-y-4">
+                  {/* Game Hub Switcher Bar */}
+                  <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <button
+                      onClick={() => setActiveGameMode('receptionist')}
+                      className={`flex-1 py-2.5 px-3.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                        activeGameMode === 'receptionist'
+                          ? 'bg-gradient-to-r from-amber-500 to-amber-400 text-slate-950 shadow-lg shadow-amber-500/20'
+                          : 'bg-slate-950/60 text-slate-300 hover:text-white border border-slate-800'
+                      }`}
+                    >
+                      <ClipboardCheck className="w-4 h-4" />
+                      <span>Station Checklist Game: Receptionist Simulator (JNLD-CHK-FOH-REC-001)</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveGameMode('hazard')}
+                      className={`flex-1 py-2.5 px-3.5 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                        activeGameMode === 'hazard'
+                          ? 'bg-gradient-to-r from-red-600 to-amber-600 text-white shadow-lg shadow-red-600/20'
+                          : 'bg-slate-950/60 text-slate-300 hover:text-white border border-slate-800'
+                      }`}
+                    >
+                      <Gamepad2 className="w-4 h-4" />
+                      <span>Kitchen Safety Game: 8-Bit Spot the Hazard (BOH)</span>
+                    </button>
+                  </div>
+
+                  {activeGameMode === 'receptionist' ? (
+                    <ReceptionistChecklistGame
+                      documents={documents}
+                      staffName={staffName}
+                      staffPosition={staffPosition}
+                      staffBranch={staffBranch}
+                      onOpenDoc={(d) => handleInitiateViewDoc(d)}
+                    />
+                  ) : (
+                    <SpotTheHazardGame
+                      documents={documents}
+                      staffName={staffName}
+                      staffPosition={staffPosition}
+                      staffBranch={staffBranch}
+                      onOpenDoc={(d) => handleInitiateViewDoc(d)}
+                    />
+                  )}
+                </div>
               )}
 
               {/* TAB 3: AUDIO READER (GEMINI 3.8 FLASH TTS) */}

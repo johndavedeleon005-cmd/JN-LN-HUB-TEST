@@ -60,12 +60,13 @@ export const ComplianceAssistantView: React.FC<ComplianceAssistantViewProps> = (
       text: `Hello! I am your **L&D Virtual Support** for **Jiangnan Hotpot / Imperial Kitchen Group Inc.**
 
 ⚡ **Speed Mode: Ultra-Fast Active (Gemini 3.1 Flash Lite)**
-I cover **all 34 documents in file**:
+I cover **all 35 documents in file**:
+* **1 Station Checklist:** JNLD-CHK-FOH-REC-001 (Receptionist Task Checklist, Version 2)
 * **1 Regulatory Act Guide:** RA 10611 (Food Safety Act of 2013)
 * **21 Company Policies:** IKQAP#001 through IKQAP#021
 * **12 Standard Operating Procedures:** IKQA-SOP#001 through IKQA-SOP#012
 
-Ask me any specific question about RA 10611, food retention samples, wire slicer procedures, handwashing double-wash, FEFO precedence, allergen alerts, or temperature control!`,
+Ask me any question about the Receptionist Task Checklist (greeting scripts, ₱899/₱999 package rates, birthday & senior promos, soup bases, leftover policy), RA 10611, food retention samples, handwashing double-wash, or temperature control!`,
     },
   ]);
 
@@ -95,21 +96,20 @@ Ask me any specific question about RA 10611, food retention samples, wire slicer
     };
   }, []);
 
-  // Quick suggestion prompts covering both SOPs and Policies
+  // Quick suggestion prompts covering Station Checklists, SOPs, and Policies
   const quickPrompts = [
-    { label: 'SOP#001 Double Wash', query: 'What is the Restroom Double Wash handwashing rule in IKQA-SOP#001?' },
+    { label: 'REC-001 Receptionist Checklist', query: 'What are all 8 sections and scripts in the Receptionist Task Checklist JNLD-CHK-FOH-REC-001?' },
+    { label: 'REC-001 Rates & Upgrades', query: 'What are the Weekday (₱899) and Weekend (₱999) package rates, Hotpot-only rates, and +₱200 Premium Meat upgrade rules for Receptionists?' },
+    { label: 'REC-001 Birthday & Senior Promo', query: 'How do the Birthday Promo (4 vs 5 paying guests) and Senior Citizen / PWD 12% VAT deduction work in JNLD-CHK-FOH-REC-001?' },
+    { label: 'REC-001 Soups, Leftover & Waiver', query: 'What are the soup base rules (Mushroom Soup non-pork), 3 meat plate initial limit, ₱1,000 leftover fee, and Outside Food Waiver rules?' },
+    { label: 'SOP#001 Double Wash (40-60s)', query: 'What is the 40-60 second handwashing and Restroom Double Wash rule in IKQA-SOP#001?' },
     { label: 'SOP#011 Retention Samples', query: 'What are the daily food retention sample volumes and 5-7 day storage rules in IKQA-SOP#011?' },
     { label: 'SOP#012 Wire Slicer', query: 'How to use and sanitize the luncheon meat wire slicer in IKQA-SOP#012 and what to do if wire breaks?' },
     { label: 'SOP#004 FEFO vs FIFO', query: 'Explain FEFO precedence over FIFO and 48-hour near expiry handling in IKQA-SOP#004.' },
-    { label: 'SOP#009 Reject Pulverization', query: 'What is the food reject pulverization protocol in IKQA-SOP#009?' },
     { label: 'SOP#010 Towel Colors', query: 'What are the 5 towel colors and their strict designated areas in IKQAP#015 & IKQA-SOP#010?' },
     { label: 'SOP#010 Cutting Boards', query: 'What are the cutting board and meat plate color codes in IKQA-SOP#010?' },
-    { label: 'SOP#003 Pest EFKs', query: 'What are the 3 lines of defense and EFK placement distance in IKQA-SOP#003?' },
-    { label: 'SOP#005 Recall 2-Hour', query: 'What is the 2-hour traceability rule and mock recall schedule in IKQA-SOP#005?' },
     { label: 'IKQAP#003 15-Min Intake', query: 'What is the 15-minute cold chain intake rule in IKQAP#003?' },
     { label: 'IKQAP#004 Big 9 Allergens', query: 'What are the Big 9 allergens and emergency anaphylaxis response in IKQAP#004?' },
-    { label: 'IKQAP#005 Big 5 Exclusion', query: 'Which symptoms or Big 5 pathogens bar an employee from the kitchen under IKQAP#005?' },
-    { label: 'IKQAP#017 Glass Breakage', query: 'What is the 3-meter quarantine glass breakage protocol in IKQAP#017?' },
   ];
 
   const handleSend = async (questionText?: string) => {

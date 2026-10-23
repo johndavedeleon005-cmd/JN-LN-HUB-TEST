@@ -81,7 +81,48 @@ function getRuleFallbackAnswer(query: string, contextDocTitle?: string, contextD
   if (/^(hi|hello|hey|good morning|good afternoon|good evening|who are you)/i.test(q)) {
     return `Hello! I am your **L&D Virtual Support** for **Jiangnan Hotpot / Imperial Kitchen Group Inc.**
 
-I cover all **34 official documents** (RA 10611 Food Safety Act of 2013, 21 Company Policies IKQAP#001–#021, and 12 SOPs IKQA-SOP#001–#012). How can I help you today?`;
+I cover all **35 official documents** (Station Checklist **JNLD-CHK-FOH-REC-001 Receptionist Task Checklist**, RA 10611 Food Safety Act of 2013, 21 Company Policies IKQAP#001–#021, and 12 SOPs IKQA-SOP#001–#012). How can I help you today?`;
+  }
+
+  // 1b. Receptionist Station Checklist triggers (JNLD-CHK-FOH-REC-001)
+  if (
+    q.includes('receptionist') ||
+    q.includes('jnld-chk-foh-rec-001') ||
+    q.includes('rec-001') ||
+    q.includes('station checklist') ||
+    q.includes('ni hao') ||
+    q.includes('899') ||
+    q.includes('999') ||
+    q.includes('birthday') ||
+    q.includes('senior') ||
+    q.includes('pwd') ||
+    q.includes('mushroom soup') ||
+    q.includes('leftover') ||
+    q.includes('outside food') ||
+    q.includes('waiver') ||
+    q.includes('bill out')
+  ) {
+    return `### **Receptionist Task Checklist (JNLD-CHK-FOH-REC-001, Version 2)**
+* **I. Initial Greeting (Task 1.1):** Greet every guest warmly: *"Ni Hao! Welcome to Jiang Nan! Is this your first time dining with us po?"* (Reply *"Welcome back po!"* if returning, or *"Welcome po!"* if first-time).
+* **II. Guest Details & Waitlist (Tasks 2.1–2.2):** Confirm guest name, number of diners (pax), and preferred mode of payment (**Cash, Credit Card, Debit Card, or GCash**). Check table availability with the assigned Server. If no table is open, record on the approved waitlist, give estimated waiting time, hand the menu, and monitor waiting guests.
+* **III. Service & Menu Introduction (Tasks 3.1–3.5):**
+  - **Dine-In Package Rates:** Always lead with the **Hotpot with Grill Package**: **₱899/person on Weekdays (+5% service charge)** and **₱999/person on Weekends (+5% service charge)**.
+  - **Hotpot-Only Rate (State ONLY if asked):** Weekdays: Hotpot updated from ₱599 to **₱699**, Grill from ₱300 to **₱200** (Package stays ₱899). Weekends: Hotpot updated from ₱699 to **₱799**, Grill from ₱300 to **₱200** (Package stays ₱999).
+  - **Premium Meat Upgrade:** Offer **Premium Meat Selection** at **+₱200 per person**.
+  - **Take-Out:** Present Ala Carte Menu, check availability, confirm order, and endorse to Cashier.
+  - **Allergens (Task 3.5):** Ask about food allergies/dietary restrictions, consult the **Allergen Guide** (never give unverified info), and **write specific allergen info on the Bill Out form** so it is visible when endorsed to the Server.
+* **IV. Promotions & Special Occasions (Tasks 4.1–4.2):**
+  - **Birthday Promo:** **Exact Birthday Today** = **4 paying guests + celebrant FREE**; **Within Birth Month** = **5 paying guests + celebrant FREE** (requires valid ID verification & Bill Out endorsement).
+  - **Senior Citizen & PWD Discount:** Only the **12% VAT component is deducted** from the total bill because the rate already reflects an unlimited dining promotion (verify valid ID/card & note on Bill Out form).
+* **V. Dining & Ordering Information (Tasks 5.1–5.3):**
+  - **Soup Selection:** **All soup bases are pork-based EXCEPT Mushroom Soup**. Choose **up to two (2) soup flavors per table**.
+  - **Initial Order:** Up to **three (3) plates of meat** for the initial order; reorders anytime via the **Additional Order Form** on the table. **Desserts and beverages are unlimited** and included.
+* **VI. Dining Guidelines & Policies (Task 6.1):**
+  - **Dining Time & Leftover Policy:** Up to **two (2) hours** dining time; **No Leftover Policy** with a **₱1,000 charge** for excessive leftovers.
+  - **Outside Food Policy:** Allowed provided the guest completes the **Updated Outside Food Waiver Form** before bringing it to the table.
+* **VII & VIII. Server Turnover & Guest Departure (Tasks 7.1–8.2):**
+  - **Server Endorsement Script:** *"Table ___ po, [number] pax, [hotpot/grill], with/without allergen or special request."*
+  - **Departure Receipt Verification:** Politely check and stamp the guest's **OR/Invoice (receipt)** before exit (if unavailable, courteously verify with the Cashier first in a non-accusatory manner), then say: *"Xie xie! Thank you for dining with us at Jiang Nan Hotpot! See us again!"*`;
   }
 
   // 2. Direct document code matching (e.g., IKQA-SOP#011, SOP 11, IKQAP#003, Policy 3, etc.)
@@ -409,14 +450,15 @@ app.post('/api/chat/stream', async (req, res) => {
 
   const systemInstruction = `You are the Imperial Kitchen Group Inc. (Jiangnan Hotpot) L&D Virtual Support.
 CRITICAL IDENTITY RULE: Always introduce and refer to yourself strictly as "L&D Virtual Support" (e.g., "Hello! I am your L&D Virtual Support"). Never call yourself "Food Safety & Compliance Intelligence Officer" or "Compliance Intelligence Assistant".
-Provide lightning-fast, practical, and legally compliant answers to kitchen, warehouse, and service staff.
-Your knowledge base covers ALL 34 official company documents in file:
+Provide lightning-fast, practical, and legally compliant answers to kitchen, warehouse, and Front-of-House (FOH) service staff.
+Your knowledge base covers ALL 35 official company documents in file:
+- 1 Station Checklist: JNLD-CHK-FOH-REC-001 (Receptionist Task Checklist, Version 2 — covering Greeting, Guest Verification/Waitlist, Weekday ₱899 / Weekend ₱999 + 5% service charge, Hotpot-only ₱699/₱799 rates, +₱200 Premium Meat upgrade, Allergen Bill Out endorsement, Birthday 4-vs-5 paying guests promo, Senior/PWD 12% VAT deduction, Pork-based soup bases except Mushroom Soup, 3 initial meat plates, 2-hour dining limit & ₱1,000 leftover fee, Outside Food Waiver, Server Turnover script, and OR/Invoice exit verification)
 - 1 Regulatory Act Guide: RA 10611 (Food Safety Act of 2013)
 - 21 Company Policies: IKQAP#001 through IKQAP#021
 - 12 Standard Operating Procedures: IKQA-SOP#001 through IKQA-SOP#012
 As well as the Code on Sanitation (PD 856) and NMIS regulations.
 
-Official Company Knowledge Base (All 34 Documents):
+Official Company Knowledge Base (All 35 Documents):
 ${FULL_DOCUMENTS_GROUNDING_BRIEF}
 
 ${contextDocTitle ? `Current Document In Focus: ${contextDocTitle}` : ''}

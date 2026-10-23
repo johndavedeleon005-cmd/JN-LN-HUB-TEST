@@ -2200,9 +2200,271 @@ const REGULATORY_GUIDES: FoodSafetyDoc[] = [
   },
 ];
 
+export const STATION_CHECKLISTS: FoodSafetyDoc[] = [
+  {
+    id: 'jnld-chk-foh-rec-001',
+    code: 'JNLD-CHK-FOH-REC-001',
+    title: 'Receptionist Task Checklist',
+    type: 'checklist',
+    category: 'Station Checklists',
+    revision: 2,
+    effectiveDate: 'Upon Approval (Version 2)',
+    pdfUrl: './assets/aistudio/RECEPTIONIST_checklist_579135b8.pdf',
+    summary:
+      'Official Front of House (FOH) Station Checklist for Receptionists at Jiang Nan Hotpot. Covers the complete 8-stage guest journey: Initial Greeting ("Ni Hao! Welcome to Jiang Nan!"), Guest Details & Waitlist Verification, Service & Menu Introduction (₱899 Weekday / ₱999 Weekend + 5% service charge, Hotpot-only rates ₱699/₱799, +₱200 Premium Meat upgrade, Allergen Bill Out endorsement), Promotions (Birthday 4-vs-5 paying guests & Senior/PWD 12% VAT deduction), Dining & Soup Rules (pork-based broths except Mushroom, max 2 soup flavors, up to 3 initial meat plates), Policies (2-hour limit, ₱1,000 leftover fee, Outside Food Waiver), Server Turnover script, and Guest Departure OR/Invoice receipt check.',
+    keyTakeaways: [
+      'I. Initial Greeting: Greet every guest warmly ("Ni Hao! Welcome to Jiang Nan! Is this your first time dining with us po?") and respond with "Welcome back po!" (returning) or "Welcome po!" (first-time).',
+      'II. Guest Verification & Waitlist: Confirm name, pax count, and payment method (Cash, Credit Card, Debit Card, or GCash). Check table availability with Server; if full, log on waitlist, state estimated wait time, hand menu, and monitor waiting guests.',
+      'III. Package Rates & Menu Intro: Always lead with Hotpot with Grill Package — ₱899/person on Weekdays (+5% service charge) and ₱999/person on Weekends (+5% service charge). State Hotpot-only rate ONLY if guest asks (Weekday Hotpot-only: ₱699 + ₱200 Grill; Weekend Hotpot-only: ₱799 + ₱200 Grill). Offer Premium Meat Selection upgrade at +₱200/person.',
+      'III.5 Allergen Endorsement: Ask Dine-In and Take-Out guests about food allergies/dietary restrictions, consult the approved Allergen Guide, and write specific allergen info directly on the Bill Out form for the Server.',
+      'IV. Birthday & Senior/PWD Promos: Exact Birthday Today = 4 paying guests + celebrant FREE; Birth Month = 5 paying guests + celebrant FREE (with valid ID). Senior Citizen/PWD = only the 12% VAT component is deducted because the rate is already an unlimited dining promotion.',
+      'V. Soup & Initial Ordering Rules: All soup bases are pork-based EXCEPT Mushroom Soup. Guests may choose up to two (2) soup flavors per table and start with up to three (3) plates of meat for the initial order (unlimited desserts/beverages included; reorders via Additional Order Form).',
+      'VI. Dining Guidelines: Up to two (2) hours dining time; No Leftover Policy with ₱1,000 charge for excessive leftovers; Outside food allowed ONLY if guest signs the Updated Outside Food Waiver Form.',
+      'VII & VIII. Server Turnover & Departure: Escort guest when table is ready and endorse to Server ("Table ___ po, [number] pax, [hotpot/grill], with/without allergen or special request"). Upon exit, courteously verify and stamp the guest OR/Invoice receipt and bid farewell ("Xie xie! Thank you for dining with us at Jiang Nan Hotpot! See us again!").',
+    ],
+    quickRules: [
+      {
+        title: 'Weekday vs. Weekend Package Rates',
+        rule: 'Lead with Hotpot + Grill Package: ₱899/pax Weekdays (+5% SC) | ₱999/pax Weekends (+5% SC). State Hotpot-only (₱699 Wkday / ₱799 Wkend) ONLY if asked. Premium Meat upgrade is +₱200/pax.',
+        type: 'critical',
+      },
+      {
+        title: 'Allergen & Soup Base Disclosure',
+        rule: 'All soup bases are PORK-BASED except Mushroom Soup (max 2 flavors/table). Always ask for allergies and write specific allergen info on the Bill Out form.',
+        type: 'critical',
+      },
+      {
+        title: 'Birthday & Senior/PWD Rules',
+        rule: 'Birthday: 4 paying guests on Exact Birthday OR 5 paying guests within Birth Month = Celebrant FREE (ID required). Senior/PWD: Only 12% VAT is deducted on unlimited promo rates.',
+        type: 'warning',
+      },
+      {
+        title: '2-Hour Limit, ₱1,000 Leftover & Waiver',
+        rule: 'Max 2 hours dining time; ₱1,000 fee for excessive leftovers; Outside food requires signed Updated Outside Food Waiver Form; Verify & stamp OR/Invoice at exit.',
+        type: 'info',
+      },
+    ],
+    sections: [
+      {
+        id: 'I',
+        title: 'I. Initial Greeting and Accommodation',
+        content:
+          'Task 1.1: Greet and acknowledge every guest warmly and politely; ask if this is their first visit.',
+        bulletPoints: [
+          'Standard Opening Script: "Ni Hao! Welcome to Jiang Nan! Is this your first time dining with us po?"',
+          'If NO (Returning Guest): "Welcome back po!"',
+          'If YES (First-Time Guest): "Welcome po!"',
+        ],
+      },
+      {
+        id: 'II',
+        title: 'II. Guest Details Verification',
+        content:
+          'Verify guest details, payment preferences, and table availability with the service team before seating or waitlisting.',
+        bulletPoints: [
+          'Task 2.1 (Confirm Guest Details & Payment): Confirm the guest\'s name, total number of diners, and preferred mode of payment.',
+          'Script (2.1): "May I have your name po and how many guests will be dining with us today? May I also ask for your preferred payment method? We accept cash, credit card, debit card, or GCash."',
+          'Check table availability with the assigned Server based on guest count and store capacity.',
+          'Task 2.2 (Waitlist Protocol): If no table is available, record the guest on the approved waitlist and provide an estimated waiting time.',
+          'Script (2.2): "May I have your name and number of pax po? Our estimated waiting time is around __ minutes. We\'ll let you know as soon as your table is ready."',
+          'Hand the menu to the guest, briefly explain the policy and reminders, and continuously monitor waiting guests.',
+        ],
+      },
+      {
+        id: 'III',
+        title: 'III. Service & Menu Introduction',
+        content:
+          'Tailor the service explanation based on whether the guest is a returning diner, first-time dine-in guest, or take-out customer, and document any allergies.',
+        bulletPoints: [
+          'Task 3.1 (Confirm Familiarity): Confirm whether the guest is a first-time or returning customer. If returning: "Welcome back po! Familiar na po kayo with our service or ordering process?" If NO / needs clarification: "Sure po, I\'ll briefly go over them with you."',
+          'Task 3.2 (Dine-In Package Rates): Clearly explain the Hotpot with Grill Package and state the applicable weekday or weekend rate, including the 5% service charge:',
+          '• Weekday Rate Script: "We offer our Hotpot with Grill package at ₱899 per person on weekdays, plus a 5% service charge."',
+          '• Weekend Rate Script: "We offer our Hotpot with Grill package at ₱999 per person on weekends, plus a 5% service charge."',
+          '• Hotpot-Only Rule: Always lead with the Hotpot with Grill Package. State the Hotpot-only rate ONLY if the guest asks — Weekdays: Hotpot from ₱599 to ₱699, Grill from ₱300 to ₱200 (Package stays ₱899); Weekends: Hotpot from ₱699 to ₱799, Grill from ₱300 to ₱200 (Package stays ₱999).',
+          'Task 3.2 (Take-Out Protocol): Present the Ala Carte Menu and confirm item availability before taking the order ("Here is our Ala Carte Menu po. Let me just check the availability of your selected items."). Confirm the order ("May I confirm your order po: 1 Meat Lovers Ala Carte.") and forward to the Cashier for processing ("Thank you po. I\'ll endorse your order to our Cashier for payment and processing.").',
+          'Task 3.3 (Premium Meat Selection Upgrade): For Dine-In, offer the Premium Meat Selection as an optional upgrade for an additional ₱200 per person ("Would you like to upgrade to our Premium Meat Selection for an additional ₱200 per person po?").',
+          'Task 3.4 (Package Verification): Verify the guest\'s selected package and briefly explain its inclusions ("Just to confirm po, you\'ll be availing our [selected package]. Let me briefly share what\'s included.").',
+          'Task 3.5 (Allergen Screening & Bill Out Endorsement): For Dine-In and Take-Out, ask whether any guest has food allergies or dietary restrictions and refer to the approved Allergen Information ("Before we proceed po, may I ask if anyone in your group has any food allergies or dietary restrictions? Let me check our Allergen Guide to assist you properly."). Write the specific allergen info on the Bill Out form so it is visible when endorsed to the server. Never provide unverified information.',
+        ],
+      },
+      {
+        id: 'IV',
+        title: 'IV. Promotions & Special Occasions',
+        content:
+          'Proactively check for birthdays and Senior Citizen / PWD cards to explain mechanics accurately and endorse details on the Bill Out form.',
+        bulletPoints: [
+          'Task 4.1 (Birthday Promo): Check if the guest is celebrating a birthday or special occasion and explain the promo mechanics:',
+          '• Script: "Are we celebrating a birthday or any special occasion today po? For our birthday promo, if it\'s your exact birthday today, you only need 4 paying guests and the birthday celebrant eats for free. If it\'s within your birth month, you need 5 paying guests and the birthday celebrant is also free. We\'ll just need to verify a valid ID po."',
+          '• Verify eligibility and endorse the required information to the Bill Out form.',
+          'Task 4.2 (Senior Citizen & PWD Discount): Inform Senior Citizen and PWD cardholders of the applicable discount and explain that only the 12% VAT will be deducted, as the rate is already under an unlimited dining promotion:',
+          '• Script: "Do we have any Senior Citizen or PWD cardholders in the group po? Please note that only the 12% VAT component will be deducted from the total bill, as our rate already reflects an unlimited dining promotion. May I kindly check the valid card and ID for verification so we can note it for bill out? Thank you po."',
+        ],
+      },
+      {
+        id: 'V',
+        title: 'V. Dining & Ordering Information',
+        content:
+          'Explain soup base composition, maximum soup flavors per table, initial meat plate limits, and unlimited inclusions.',
+        bulletPoints: [
+          'Task 5.1 (Soup Selection): Explain the soup selection, noting that ALL soup bases are pork-based EXCEPT the Mushroom Soup, and that guests may choose up to two (2) soup flavors per table.',
+          '• Script (5.1): "For your soup base po, you may choose up to two (2) flavors per table. Please note that all of our soup bases are pork-based, except for the Mushroom Soup."',
+          'Task 5.2 (Initial Order & Reordering Rules): Explain the initial order and ordering rules — guests may start with up to three (3) plates of meat for the initial order, other menu items may be ordered per plate, and additional orders can be requested anytime using the Additional Order Form on the table.',
+          '• Script (5.2): "For your initial order po, you may choose up to three (3) plates of meat. Other items on the menu may be ordered per plate, and you can place additional orders anytime using the Additional Order Form on your table."',
+          'Task 5.3 (Other Selections): Advise guests that Ala Carte items are also available and that desserts and beverages are unlimited and included in the package.',
+          '• Script (5.3): "We also have Ala Carte items available if you\'d like to order them separately po. Desserts and beverages are unlimited and already included in your package."',
+        ],
+      },
+      {
+        id: 'VI',
+        title: 'VI. Dining Guidelines & Policies',
+        content:
+          'Communicate the 2-hour dining duration, the ₱1,000 excessive leftover charge, and the Outside Food Waiver requirement.',
+        bulletPoints: [
+          'Task 6.1 (Dining Time & Leftover Policy): Inform the guest that dining time is up to two (2) hours and explain the No Leftover Policy, including the ₱1,000 charge for any excessive leftovers.',
+          '• Script (6.1a): "Just a gentle reminder po, our dining time is up to two (2) hours. We also observe a No Leftover Policy, and any excessive leftovers will have a ₱1,000 charge."',
+          'Task 6.1 (Outside Food Waiver Policy): Inform the guest that outside food is allowed, provided they complete the Updated Outside Food Waiver Form before proceeding.',
+          '• Script (6.1b): "Outside food is allowed po; we will just ask you to fill out our Food Waiver Form before bringing it to the table."',
+        ],
+      },
+      {
+        id: 'VII',
+        title: 'VII. Guest Turnover to Service Team',
+        content:
+          'Escort guests only after confirming the table is ready, and perform a complete verbal and written endorsement to the assigned Server.',
+        bulletPoints: [
+          'Task 7.1 (Table Readiness & Escort): Confirm that the assigned table is available and ready, then escort the guest to the table ("Your table is ready po. Please come this way.").',
+          'Task 7.2 (Endorsement to Assigned Server): Endorse the guest\'s information to the assigned Server so the guest is properly assisted:',
+          '• Script to Server: "Table ___ po, [number] pax, [hotpot/grill], with/without allergen or special request."',
+          '• Script to Customer: "Your Server will assist you with the rest of your order and dining needs po."',
+        ],
+      },
+      {
+        id: 'VIII',
+        title: 'VIII. Guest Departure',
+        content:
+          'Courteously verify and stamp the official receipt (OR/Invoice) prior to exit and deliver the signature Jiang Nan farewell.',
+        bulletPoints: [
+          'Task 8.1 (Receipt Verification & Stamping): Verify the guest\'s OR/Invoice (receipt) before exit and stamp the receipt accordingly.',
+          '• Script (8.1): "Thank you for dining with us po. May I kindly check your receipt or OR/Invoice before you go? Thank you po."',
+          '• Missing Receipt Handling: If the receipt is not available, courteously check with the Cashier first while maintaining a polite, non-accusatory approach.',
+          'Task 8.2 (Farewell Greeting): Thank the departing guest warmly:',
+          '• Script (8.2): "Xie xie! Thank you for dining with us at Jiang Nan Hotpot! See us again!"',
+        ],
+      },
+    ],
+    tables: [
+      {
+        title: 'Receptionist Quick Rate, Promo & Policy Matrix (JNLD-CHK-FOH-REC-001)',
+        headers: ['Service Category', 'Standard Rule / Rate', 'Mandatory Receptionist Action / Script Note'],
+        rows: [
+          ['Weekday Package (Hotpot + Grill)', '₱899 / person + 5% Service Charge', 'Always lead with the Hotpot with Grill Package.'],
+          ['Weekend Package (Hotpot + Grill)', '₱999 / person + 5% Service Charge', 'Always lead with the Hotpot with Grill Package.'],
+          ['Hotpot-Only Rate (State ONLY if asked)', 'Weekdays: ₱699 Hotpot (+₱200 Grill = ₱899) | Weekends: ₱799 Hotpot (+₱200 Grill = ₱999)', 'Disclose Hotpot-only pricing ONLY when specifically asked by the guest.'],
+          ['Premium Meat Selection Upgrade', '+₱200 / person optional add-on', 'Offer to all Dine-In guests during Section III menu introduction.'],
+          ['Birthday Promotion', 'Exact Birthday: 4 paying + 1 FREE | Birth Month: 5 paying + 1 FREE', 'Verify valid government ID and endorse details on the Bill Out form.'],
+          ['Senior Citizen / PWD Discount', '12% VAT deduction only', 'Explain rate is already an unlimited promo; verify ID and note on Bill Out form.'],
+          ['Soup Bases & Initial Meat Order', 'Max 2 soup flavors/table (all pork-based except Mushroom) | Max 3 meat plates initial order', 'Explain Additional Order Form on table & unlimited desserts/beverages.'],
+          ['Dining Time, Leftovers & Outside Food', 'Max 2 Hours | ₱1,000 excessive leftover charge | Outside food allowed with Waiver', 'Require signed Updated Outside Food Waiver Form before bringing outside food to table.'],
+        ],
+      },
+    ],
+    signatories: {
+      preparedBy: 'Lany Ann Nemenzo (L&D Specialist)',
+      reviewedBy: ['Virna Joy Bernardo (L&D Manager)', 'Aries Tambasacan (Operations Manager)'],
+      approvedBy: 'Eric Co (General Manager / Vice President)',
+    },
+    changeHistory: [
+      {
+        rev: 2,
+        date: 'Upon Approval (Version 2)',
+        author: 'Lany Ann Nemenzo (L&D Department)',
+        purpose: 'Official Version 2 Receptionist Task Checklist (JNLD-CHK-FOH-REC-001) covering Sections I to VIII guest journey and updated package rates',
+      },
+    ],
+    quizQuestions: [
+      {
+        question: 'According to JNLD-CHK-FOH-REC-001 (Section III.3.2), what are the standard Weekday and Weekend rates for the Hotpot with Grill Package, and when should you mention the Hotpot-only rate?',
+        options: [
+          '₱599 Weekday / ₱699 Weekend; always mention Hotpot-only first',
+          '₱899/person on Weekdays (+5% service charge) and ₱999/person on Weekends (+5% service charge); always lead with Hotpot with Grill and state the Hotpot-only rate (₱699 Weekday / ₱799 Weekend) ONLY if the guest asks',
+          '₱1,000 flat rate every day with no service charge',
+          '₱799 Weekday / ₱899 Weekend including VAT and no service charge',
+        ],
+        answerIndex: 1,
+        explanation:
+          'Task 3.2 mandates leading with the Hotpot with Grill Package at ₱899/person on weekdays (+5% service charge) and ₱999/person on weekends (+5% service charge), stating the Hotpot-only rate (₱699 weekday / ₱799 weekend) ONLY if the guest asks.',
+      },
+      {
+        question: 'When a guest informs the Receptionist of a food allergy or dietary restriction (Task 3.5), what must the Receptionist do?',
+        options: [
+          'Guess which ingredients are safe without checking any guide',
+          'Refer to the approved Allergen Guide, never provide unverified info, and write the specific allergen information on the Bill Out form so it is visible when endorsed to the Server',
+          'Tell the guest to ask the Cashier after paying',
+          'Only mention it verbally to the security guard',
+        ],
+        answerIndex: 1,
+        explanation:
+          'Task 3.5 requires consulting the approved Allergen Information/Guide, never providing unverified info, and writing the specific allergen on the Bill Out form so it is clearly visible when endorsed to the assigned Server.',
+      },
+      {
+        question: 'What are the official Birthday Promo mechanics under Section IV (Task 4.1) of the Receptionist Task Checklist?',
+        options: [
+          '1 paying guest = celebrant free any day of the year',
+          'Exact birthday today: 4 paying guests + celebrant FREE; Within birth month: 5 paying guests + celebrant FREE (with valid ID verification and Bill Out endorsement)',
+          '10 paying guests required on both exact birthday and birth month',
+          '50% discount for the whole table without ID verification',
+        ],
+        answerIndex: 1,
+        explanation:
+          'Task 4.1 specifies: Exact birthday today requires 4 paying guests for the celebrant to eat free; within the birth month requires 5 paying guests for the celebrant to eat free, subject to valid ID verification and Bill Out endorsement.',
+      },
+      {
+        question: 'What must the Receptionist explain to guests regarding Soup Selection (Task 5.1) and Initial Meat Ordering (Task 5.2)?',
+        options: [
+          'All soups are vegetable-based and guests can order 10 meat plates initially',
+          'All soup bases are pork-based EXCEPT Mushroom Soup (choose up to 2 flavors per table), and guests may start with up to 3 plates of meat for the initial order',
+          'Guests can only choose 1 soup flavor and 1 plate of meat for the entire 2 hours',
+          'All soup bases are beef-based except Spicy Soup',
+        ],
+        answerIndex: 1,
+        explanation:
+          'Tasks 5.1 and 5.2 require informing guests that all soup bases are pork-based except Mushroom Soup (max 2 flavors per table) and that the initial order allows up to 3 plates of meat (with reorders anytime via the Additional Order Form).',
+      },
+      {
+        question: 'Under Section VI (Task 6.1), what are the rules regarding Dining Time, Leftovers, and Outside Food?',
+        options: [
+          'Unlimited hours, no leftover fee, and outside food is strictly banned',
+          'Up to 2 hours dining time, a ₱1,000 charge for excessive leftovers under the No Leftover Policy, and outside food is allowed provided the guest completes the Updated Outside Food Waiver Form',
+          '1 hour dining time and ₱200 leftover fee',
+          '3 hours dining time and outside food requires a ₱500 corkage fee only',
+        ],
+        answerIndex: 1,
+        explanation:
+          'Task 6.1 sets dining time at up to 2 hours, enforces a ₱1,000 charge for excessive leftovers, and permits outside food once the guest fills out the Updated Outside Food Waiver Form.',
+      },
+    ],
+    tags: [
+      'Station Checklist',
+      'Receptionist',
+      'FOH',
+      'JNLD-CHK-FOH-REC-001',
+      'Ni Hao',
+      'Hotpot with Grill',
+      'Allergen Guide',
+      'Birthday Promo',
+      'Senior PWD Discount',
+      'Mushroom Soup',
+      'Outside Food Waiver',
+      'Bill Out Form',
+    ],
+  },
+];
+
 export const INITIAL_FOOD_SAFETY_DOCUMENTS: FoodSafetyDoc[] = [
+  ...STATION_CHECKLISTS,
   ...REGULATORY_GUIDES,
   ...POLICIES,
   ...ALL_SOP_DOCUMENTS,
 ];
+
 
