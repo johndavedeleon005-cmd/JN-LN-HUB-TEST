@@ -16,6 +16,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { TTSService } from '../services/ttsService';
+import { generateLocalComplianceResponse } from '../services/localComplianceResponder';
 
 interface Message {
   id: string;
@@ -233,31 +234,27 @@ Ask me any specific question about RA 10611, food retention samples, wire slicer
               : undefined,
           }),
         });
+        if (!fallbackRes.ok) throw new Error('Static host');
         const fallbackData = await fallbackRes.json();
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantMsgId
               ? {
                   ...m,
-                  text: fallbackData.answer || 'Compliance rule verified.',
+                  text: fallbackData.answer || generateLocalComplianceResponse(q, documents, activeDoc),
                   isStreaming: false,
                 }
               : m
           )
         );
       } catch {
+        const localAnswer = generateLocalComplianceResponse(q, documents, activeDoc);
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantMsgId
               ? {
                   ...m,
-                  text: `### **Imperial Kitchen Group Compliance Standard**
-* **Scope:** Covers all 33 documents (IKQAP#001 - #021 and IKQA-SOP#001 - #012).
-* **Cold Storage:** Refrigerators strictly at 0°C to 4°C; Freezers at -18°C or below.
-* **15-Minute Rule:** Cold deliveries must reach cold storage within 15 minutes of dock arrival.
-* **Danger Zone (5°C to 60°C):** High-risk foods must never stay >1 hour cumulative.
-* **Handwashing:** 40–60 second wash + Restroom Double Wash method (IKQA-SOP#001).
-* **Retention Samples:** 100-150mL broth, 100g meats held 5-7 days under lock (IKQA-SOP#011).`,
+                  text: localAnswer,
                   isStreaming: false,
                 }
               : m

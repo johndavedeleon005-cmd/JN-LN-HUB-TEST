@@ -141,19 +141,31 @@ export default function App() {
 
   // Persist bookmarks
   useEffect(() => {
-    localStorage.setItem('ikqa_bookmarks', JSON.stringify(bookmarkedIds));
+    try {
+      localStorage.setItem('ikqa_bookmarks', JSON.stringify(bookmarkedIds));
+    } catch {
+      // Ignore storage errors in private/restricted browsers
+    }
   }, [bookmarkedIds]);
 
   // Persist read documents
   useEffect(() => {
-    localStorage.setItem('ikqa_read_docs', JSON.stringify(readDocIds));
+    try {
+      localStorage.setItem('ikqa_read_docs', JSON.stringify(readDocIds));
+    } catch {
+      // Ignore storage errors in private/restricted browsers
+    }
   }, [readDocIds]);
 
   // Persist staff profile
   useEffect(() => {
-    localStorage.setItem('ikqa_staff_name', staffName);
-    localStorage.setItem('ikqa_staff_position', staffPosition);
-    localStorage.setItem('ikqa_staff_branch', staffBranch);
+    try {
+      localStorage.setItem('ikqa_staff_name', staffName);
+      localStorage.setItem('ikqa_staff_position', staffPosition);
+      localStorage.setItem('ikqa_staff_branch', staffBranch);
+    } catch {
+      // Ignore storage errors in private/restricted browsers
+    }
   }, [staffName, staffPosition, staffBranch]);
 
   // Handlers

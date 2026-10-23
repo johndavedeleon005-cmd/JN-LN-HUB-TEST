@@ -13,6 +13,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { TTSService } from '../services/ttsService';
+import { generateLocalComplianceResponse } from '../services/localComplianceResponder';
 
 interface ComplianceAssistantModalProps {
   isOpen: boolean;
@@ -183,26 +184,23 @@ ${activeDoc ? `Currently viewing: **${activeDoc.code}: ${activeDoc.title}**` : '
               : undefined,
           }),
         });
+        if (!fbRes.ok) throw new Error('Static host');
         const fbData = await fbRes.json();
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantMsgId
-              ? { ...m, text: fbData.answer || 'Compliance guidance verified.', isStreaming: false }
+              ? { ...m, text: fbData.answer || generateLocalComplianceResponse(q, documents, activeDoc), isStreaming: false }
               : m
           )
         );
       } catch {
+        const localAnswer = generateLocalComplianceResponse(q, documents, activeDoc);
         setMessages((prev) =>
           prev.map((m) =>
             m.id === assistantMsgId
               ? {
                   ...m,
-                  text: `### **Compliance Quick Reference**
-* **Handwashing (IKQA-SOP#001):** Complete 6-step wash for **40 to 60 seconds** + Restroom Double Wash.
-* **Refrigeration:** Must be kept at 0°C to 4°C.
-* **15-Minute Rule:** Cold shipments must reach refrigeration within 15 minutes.
-* **Danger Zone (5°C to 60°C):** High-risk foods must never stay >1 hr cumulative.
-* **Towel Colors:** White = clean wares; Blue = dining tables; Green = kitchen prep; Red = restroom only.`,
+                  text: localAnswer,
                   isStreaming: false,
                 }
               : m
