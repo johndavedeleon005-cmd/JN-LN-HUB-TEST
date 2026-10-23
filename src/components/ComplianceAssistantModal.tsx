@@ -40,9 +40,9 @@ export const ComplianceAssistantModal: React.FC<ComplianceAssistantModalProps> =
     {
       id: 'welcome',
       role: 'assistant',
-      text: `Hello! I am your **Jiangnan Hotpot / Imperial Kitchen Group** Compliance Assistant. 
+      text: `Hello! I am your **L&D Virtual Support** for **Jiangnan Hotpot / Imperial Kitchen Group Inc.**
 
-I am fully grounded across all **33 official documents in file** (21 Policies: IKQAP#001-#021 & 12 SOPs: IKQA-SOP#001-#012). 
+I am fully grounded across all **34 official documents in file** (RA 10611, 21 Policies: IKQAP#001-#021 & 12 SOPs: IKQA-SOP#001-#012). 
 
 ${activeDoc ? `Currently viewing: **${activeDoc.code}: ${activeDoc.title}**` : 'Ask any question about temperatures, retention samples, wire slicer safety, or towel codes.'}`,
     },
@@ -198,6 +198,7 @@ ${activeDoc ? `Currently viewing: **${activeDoc.code}: ${activeDoc.title}**` : '
               ? {
                   ...m,
                   text: `### **Compliance Quick Reference**
+* **Handwashing (IKQA-SOP#001):** Complete 6-step wash for **40 to 60 seconds** + Restroom Double Wash.
 * **Refrigeration:** Must be kept at 0°C to 4°C.
 * **15-Minute Rule:** Cold shipments must reach refrigeration within 15 minutes.
 * **Danger Zone (5°C to 60°C):** High-risk foods must never stay >1 hr cumulative.
@@ -389,13 +390,13 @@ ${activeDoc ? `Currently viewing: **${activeDoc.code}: ${activeDoc.title}**` : '
             </div>
             <div>
               <h3 className="text-xs sm:text-sm font-black text-white flex items-center gap-1.5">
-                <span>AI Compliance Assistant</span>
+                <span>L&D Virtual Support</span>
                 <span className="px-1.5 py-0.2 rounded text-[9px] bg-red-950 text-red-300 border border-red-800/60 font-mono">
-                  33 Docs
+                  34 Docs
                 </span>
               </h3>
               <p className="text-[10px] text-slate-400">
-                {activeDoc ? `Context: ${activeDoc.code}` : 'Covering all 21 Policies & 12 SOPs'}
+                {activeDoc ? `Context: ${activeDoc.code}` : 'Covering RA 10611, 21 Policies & 12 SOPs'}
               </p>
             </div>
           </div>

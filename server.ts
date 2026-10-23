@@ -35,15 +35,21 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 app.use(express.json({ limit: '10mb' }));
 
-// Initialize GoogleGenAI server-side with User-Agent header
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    },
-  },
-});
+// Lazy-initialize GoogleGenAI server-side so container startup never crashes if env var is injected lazily
+let aiInstance: GoogleGenAI | null = null;
+function getGenAI(): GoogleGenAI {
+  if (!aiInstance) {
+    aiInstance = new GoogleGenAI({
+      apiKey: process.env.GEMINI_API_KEY || 'missing-api-key',
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        },
+      },
+    });
+  }
+  return aiInstance;
+}
 
 // Build comprehensive grounding catalog for all 33 documents (21 Policies + 12 SOPs)
 const FULL_DOCUMENTS_GROUNDING_BRIEF = INITIAL_FOOD_SAFETY_DOCUMENTS.map((doc: DocItem) => {
@@ -71,7 +77,14 @@ ${tablesBrief}
 function getRuleFallbackAnswer(query: string, contextDocTitle?: string, contextDocContent?: string): string {
   const q = query.toLowerCase().trim();
 
-  // 1. Direct document code matching (e.g., IKQA-SOP#011, SOP 11, IKQAP#003, Policy 3, etc.)
+  // 1. Greeting / Identity check
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening|who are you)/i.test(q)) {
+    return `Hello! I am your **L&D Virtual Support** for **Jiangnan Hotpot / Imperial Kitchen Group Inc.**
+
+I cover all **34 official documents** (RA 10611 Food Safety Act of 2013, 21 Company Policies IKQAP#001–#021, and 12 SOPs IKQA-SOP#001–#012). How can I help you today?`;
+  }
+
+  // 2. Direct document code matching (e.g., IKQA-SOP#011, SOP 11, IKQAP#003, Policy 3, etc.)
   const sopCodeMatch = q.match(/sop[#\s\-_]*0*(\d{1,2})/i);
   const policyCodeMatch = q.match(/(?:policy|ikqap)[#\s\-_]*0*(\d{1,2})/i);
 
@@ -93,11 +106,22 @@ function getRuleFallbackAnswer(query: string, contextDocTitle?: string, contextD
     }
   }
 
-  // 2. Specific Kitchen & Compliance Topic Triggers across all 12 SOPs & 21 Policies
+  // 2. Specific Kitchen & Compliance Topic Triggers across RA 10611, 12 SOPs & 21 Policies
+  if (q.includes('10611') || q.includes('food safety act') || q.includes('2013') || q.includes('fbo') || q.includes('statutory')) {
+    return `### **Food Safety Act of 2013 (Republic Act No. 10611)**
+* **Primary Legal Mandate (Sec. 13–14):** Food Business Operators (FBOs) like Imperial Kitchen Group Inc. / Jiangnan Hotpot bear primary responsibility for ensuring food satisfies Philippine food safety law across the farm-to-fork chain.
+* **Regulatory Jurisdictions (Article V):**
+  - **DA (NMIS, BFAR, BPI):** Regulates primary production & post-harvest raw meats, seafood, and produce.
+  - **DOH (FDA):** Regulates processed and prepackaged food products, sauces, and epidemiological outbreak investigations.
+  - **DILG & LGUs:** Enforce the Sanitation Code (PD 856) in restaurants, issue Store Sanitary Permits and Employee Health Certificates, and conduct unannounced sanitary inspections.
+* **Mandatory FSCO & Training (Sec. 28):** Requires certified Food Safety Compliance Officers (FSCO) and mandatory food handler training on GHP, GMP, SSOP, and HACCP.
+* **Penalties (Sec. 38):** Fines from **₱50,000 up to ₱500,000**, permit suspension/revocation, permanent establishment closure, and **imprisonment of up to 6 years** if unsafe food results in hospitalization or death.`;
+  }
+
   if (q.includes('handwash') || q.includes('hand wash') || q.includes('double wash') || q.includes('bar soap')) {
     return `### **Handwashing & Double Wash Protocol (IKQA-SOP#001)**
-* **6-Step 20-Second Technique:** Wet hands with potable water -> Apply liquid antimicrobial soap -> Scrub vigorously for at least 10 seconds (backs of hands, wrists, webbing, nails) -> Rinse thoroughly -> Dry with single-use paper towel or air dryer -> Turn off faucet using the paper towel.
-* **Restroom Double Wash Method:** Staff MUST wash hands first inside the comfort room, then immediately perform a second full 20-second wash at the kitchen handwash sink before touching food, clean wares, or equipment.
+* **6-Step 40–60 Second Technique:** Wet hands with potable water -> Apply liquid antimicrobial soap -> Scrub vigorously (backs of hands, wrists, webbing, nails) -> Rinse thoroughly -> Dry with single-use paper towel or air dryer -> Turn off faucet using the paper towel (40–60 seconds total).
+* **Restroom Double Wash Method:** Staff MUST wash hands first inside the comfort room, then immediately perform a second full 40–60 second wash at the kitchen handwash sink before touching food, clean wares, or equipment.
 * **Prohibited Items:** Bar soap is STRICTLY PROHIBITED (it harbors bacterial reservoirs). Only approved liquid antimicrobial dispensers are allowed.
 * **Contamination Breach:** Any food touched during an observed handwashing violation is deemed contaminated and must be immediately discarded. Retrain staff immediately.`;
   }
@@ -284,7 +308,7 @@ function getRuleFallbackAnswer(query: string, contextDocTitle?: string, contextD
   return `### **Imperial Kitchen Group Compliance Guidance**
 Covering all **33 documents** (21 Policies: IKQAP#001 - #021 and 12 SOPs: IKQA-SOP#001 - #012):
 * **Cold Storage & Danger Zone:** ≤4°C chillers, ≤-18°C freezers; 15-Minute Intake Rule; Never exceed 1 hour in Danger Zone (5°C to 60°C).
-* **Sanitation & Hygiene:** 20-second handwashing + Restroom Double Wash (IKQA-SOP#001); beard snoods >1.25cm (IKQA-SOP#002); no personal phones on prep line (IKQA-SOP#008).
+* **Sanitation & Hygiene:** 40–60 second handwashing + Restroom Double Wash (IKQA-SOP#001); beard snoods >1.25cm (IKQA-SOP#002); no personal phones on prep line (IKQA-SOP#008).
 * **Hardware Matrix:** Red (raw meat), Yellow (poultry), Blue (seafood), Green (produce), Brown (dairy/cooked), White (allergens). Towels: Blue (FOH), Yellow (sink), Green (kitchen), White (wares), Red (restroom).
 * **Storage & Inventory:** FEFO strictly overrides FIFO (IKQA-SOP#004); 48-hr near expiry prioritization.
 * **Daily Retention Samples:** 100-150mL broth, 100g protein held for 5-7 days under lock (IKQA-SOP#011).
@@ -292,8 +316,8 @@ Covering all **33 documents** (21 Policies: IKQAP#001 - #021 and 12 SOPs: IKQA-S
 }
 
 function formatDocumentDirectAnswer(doc: any): string {
-  const takeaways = doc.keyTakeaways.map((t: string) => `* ${t}`).join('\n');
-  const rules = doc.quickRules.map((r: any) => `* **[${r.type.toUpperCase()}] ${r.title}:** ${r.rule}`).join('\n');
+  const takeaways = (doc.keyTakeaways || []).map((t: string) => `* ${t}`).join('\n');
+  const rules = (doc.quickRules || []).map((r: any) => `* **[${r.type.toUpperCase()}] ${r.title}:** ${r.rule}`).join('\n');
   return `### **${doc.code}: ${doc.title}**
 * **Type:** ${doc.type.toUpperCase()} | **Category:** ${doc.category} | **Revision:** ${doc.revision}
 * **Summary:** ${doc.summary}
@@ -317,7 +341,7 @@ app.post('/api/tts', async (req, res) => {
 
     const trimmedText = text.trim().slice(0, 2500);
 
-    const response = await ai.models.generateContent({
+    const response = await getGenAI().models.generateContent({
       model: 'gemini-3.8-flash-tts',
       contents: [
         {
@@ -383,25 +407,28 @@ app.post('/api/chat/stream', async (req, res) => {
   res.setHeader('Cache-Control', 'no-cache, no-transform');
   res.setHeader('Connection', 'keep-alive');
 
-  const systemInstruction = `You are the Imperial Kitchen Group Inc. (Jiangnan Hotpot) Food Safety & Compliance Intelligence Officer.
+  const systemInstruction = `You are the Imperial Kitchen Group Inc. (Jiangnan Hotpot) L&D Virtual Support.
+CRITICAL IDENTITY RULE: Always introduce and refer to yourself strictly as "L&D Virtual Support" (e.g., "Hello! I am your L&D Virtual Support"). Never call yourself "Food Safety & Compliance Intelligence Officer" or "Compliance Intelligence Assistant".
 Provide lightning-fast, practical, and legally compliant answers to kitchen, warehouse, and service staff.
-Your knowledge base covers ALL 33 official company documents in file:
+Your knowledge base covers ALL 34 official company documents in file:
+- 1 Regulatory Act Guide: RA 10611 (Food Safety Act of 2013)
 - 21 Company Policies: IKQAP#001 through IKQAP#021
 - 12 Standard Operating Procedures: IKQA-SOP#001 through IKQA-SOP#012
-As well as Philippine Food Safety Act of 2013 (RA 10611), Code on Sanitation (PD 856), and NMIS regulations.
+As well as the Code on Sanitation (PD 856) and NMIS regulations.
 
-Official Company Knowledge Base (All 33 Documents):
+Official Company Knowledge Base (All 34 Documents):
 ${FULL_DOCUMENTS_GROUNDING_BRIEF}
 
 ${contextDocTitle ? `Current Document In Focus: ${contextDocTitle}` : ''}
 ${contextDocContent ? `Document Details:\n${contextDocContent.slice(0, 3000)}` : ''}
 
 Instructions:
-1. Provide a direct, actionable answer with clean markdown bullet points and bold highlights.
-2. Keep responses fast, concise, and operational for busy kitchen and warehouse staff.
-3. Highlight critical control numbers (temperatures like 4°C, 5°C, 60°C, 74°C, 15-minute cold chain rule, Big 9 allergens, 5-7 days retention, 0.8-1.0cm wire slicer thickness, towel/board color codes).
-4. Always cite the exact document code (e.g., IKQAP#001 to #021, IKQA-SOP#001 to #012).
-5. Maintain multi-turn conversational context with the user.`;
+1. Always identify yourself as "L&D Virtual Support" when greeting or asked who you are.
+2. Provide a direct, actionable answer with clean markdown bullet points and bold highlights.
+3. Keep responses fast, concise, and operational for busy kitchen and warehouse staff.
+4. Highlight critical control numbers (temperatures like 4°C, 5°C, 60°C, 74°C, 15-minute cold chain rule, Big 9 allergens, 5-7 days retention, 0.8-1.0cm wire slicer thickness, towel/board color codes).
+5. Always cite the exact document code (e.g., RA 10611, IKQAP#001 to #021, IKQA-SOP#001 to #012).
+6. Maintain multi-turn conversational context with the user.`;
 
   try {
     // Format conversation history for @google/genai chats
@@ -410,7 +437,7 @@ Instructions:
       parts: [{ text: typeof h.text === 'string' ? h.text : String(h.text || '') }],
     }));
 
-    const chat = ai.chats.create({
+    const chat = getGenAI().chats.create({
       model: selectedModel,
       config: {
         systemInstruction,
@@ -440,7 +467,7 @@ Instructions:
   }
 });
 
-// Single-turn / Non-streaming Compliance Q&A Assistant
+// Single-turn / Non-streaming L&D Virtual Support Q&A
 app.post('/api/compliance-assistant', async (req, res) => {
   const { question, history = [], speedMode = 'fast', contextDocTitle, contextDocContent } = req.body;
   if (!question || typeof question !== 'string') {
@@ -456,11 +483,12 @@ app.post('/api/compliance-assistant', async (req, res) => {
   }
 
   try {
-    const prompt = `You are the Imperial Kitchen Group Inc. (Jiangnan Hotpot) Food Safety & Compliance Intelligence Assistant.
+    const prompt = `You are the Imperial Kitchen Group Inc. (Jiangnan Hotpot) L&D Virtual Support.
+CRITICAL IDENTITY RULE: Always introduce and refer to yourself strictly as "L&D Virtual Support" (e.g., "Hello! I am your L&D Virtual Support"). Never call yourself "Food Safety & Compliance Intelligence Officer" or "Compliance Intelligence Assistant".
 Assist restaurant, kitchen, warehouse, and service staff with fast, accurate, and actionable compliance guidance.
-Base your answer on the complete database of 33 documents (21 Policies: IKQAP#001 to #021 and 12 SOPs: IKQA-SOP#001 to #012) and RA 10611 / PD 856.
+Base your answer on the complete database of 34 documents (RA 10611, 21 Policies: IKQAP#001 to #021 and 12 SOPs: IKQA-SOP#001 to #012) and PD 856.
 
-Official Company Knowledge Base (All 33 Documents):
+Official Company Knowledge Base (All 34 Documents):
 ${FULL_DOCUMENTS_GROUNDING_BRIEF}
 
 ${contextDocTitle ? `Current Document Being Viewed: ${contextDocTitle}` : ''}
@@ -470,13 +498,14 @@ Staff Query:
 ${question}
 
 Instructions:
-1. Provide a direct, practical, and clear response with markdown formatting (bullet points, bold highlights).
-2. Keep it crisp, accurate, and fast.
-3. Highlight critical control numbers (temperatures like 4°C, 5°C, 60°C, 74°C, 15-minute cold chain rule, Big 9 allergens, 5-7 days sample retention, 0.8-1.0cm slicer thickness, towel/board color codes).
-4. Always cite the exact document number (e.g. IKQAP#001 to #021, IKQA-SOP#001 to #012).
-5. Emphasize immediate corrective actions if an infraction or spill occurred.`;
+1. Always identify yourself as "L&D Virtual Support" when greeting or asked who you are.
+2. Provide a direct, practical, and clear response with markdown formatting (bullet points, bold highlights).
+3. Keep it crisp, accurate, and fast.
+4. Highlight critical control numbers (temperatures like 4°C, 5°C, 60°C, 74°C, 15-minute cold chain rule, Big 9 allergens, 5-7 days sample retention, 0.8-1.0cm slicer thickness, towel/board color codes).
+5. Always cite the exact document number (e.g. RA 10611, IKQAP#001 to #021, IKQA-SOP#001 to #012).
+6. Emphasize immediate corrective actions if an infraction or spill occurred.`;
 
-    const response = await ai.models.generateContent({
+    const response = await getGenAI().models.generateContent({
       model: selectedModel,
       contents: prompt,
     });

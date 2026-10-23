@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   ShieldAlert,
   Flame,
@@ -31,6 +31,7 @@ export const WelcomeTrainingHubModal: React.FC<WelcomeTrainingHubModalProps> = (
 }) => {
   const [agreed, setAgreed] = useState(hasAgreedNDA);
   const [attemptedSubmitWithoutAgreement, setAttemptedSubmitWithoutAgreement] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   // Sync state if prop changes
   useEffect(() => {
@@ -38,6 +39,20 @@ export const WelcomeTrainingHubModal: React.FC<WelcomeTrainingHubModalProps> = (
       setAgreed(true);
     }
   }, [hasAgreedNDA]);
+
+  // Ensure the animated L&D video plays continuously like a GIF while the popup is open
+  useEffect(() => {
+    const vid = videoRef.current;
+    if (!vid) return;
+
+    if (isOpen) {
+      vid.muted = true;
+      vid.loop = true;
+      vid.play().catch(() => {});
+    } else {
+      vid.pause();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -66,7 +81,7 @@ export const WelcomeTrainingHubModal: React.FC<WelcomeTrainingHubModalProps> = (
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header Banner */}
-        <div className="relative bg-gradient-to-r from-red-900 via-red-800 to-amber-900 px-6 py-6 text-white border-b border-red-700/50 flex-shrink-0">
+        <div className="relative bg-gradient-to-r from-red-900 via-red-800 to-amber-900 px-6 py-5 text-white border-b border-red-700/50 flex-shrink-0">
           {/* Subtle background glow */}
           <div className="absolute top-0 right-0 w-64 h-32 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -105,14 +120,42 @@ export const WelcomeTrainingHubModal: React.FC<WelcomeTrainingHubModalProps> = (
             <span>Welcome to Learning and Development Training Hub!</span>
           </h1>
 
-          <p className="mt-2 text-xs sm:text-sm text-red-100/90 leading-relaxed">
+          <p className="mt-1.5 text-xs sm:text-sm text-red-100/90 leading-relaxed">
             The centralized training, quality assurance, and standard operating procedures platform for all restaurant staff and kitchen professionals.
           </p>
         </div>
 
         {/* Scrollable Content Body */}
-        <div className="p-5 sm:p-6 overflow-y-auto space-y-6 text-slate-200 text-sm leading-relaxed custom-scrollbar">
+        <div className="p-5 sm:p-6 overflow-y-auto space-y-5 text-slate-200 text-sm leading-relaxed custom-scrollbar">
           
+          {/* Animated L&D Logo Video Showcase (GIF-style continuous loop, un-pausable while modal is open) */}
+          <div className="flex flex-col items-center justify-center">
+            <div 
+              className="relative w-48 h-48 sm:w-56 sm:h-56 rounded-2xl overflow-hidden bg-white shadow-xl border-2 border-amber-500/50 ring-4 ring-red-900/30 flex items-center justify-center select-none"
+              onContextMenu={(e) => e.preventDefault()}
+            >
+              <video
+                ref={videoRef}
+                src="./assets/aistudio/ANIMATED_LND_LOGO_9bad3066.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                controls={false}
+                disablePictureInPicture
+                disableRemotePlayback
+                onContextMenu={(e) => e.preventDefault()}
+                onPause={(e) => {
+                  // Prevent pausing while popup is open so it acts strictly like a looping GIF
+                  if (isOpen) {
+                    e.currentTarget.play().catch(() => {});
+                  }
+                }}
+                className="w-full h-full object-contain pointer-events-none select-none"
+              />
+            </div>
+          </div>
+
           {/* Mandatory Agreement Gate Notice if not yet signed */}
           {!hasAgreedNDA && (
             <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3">

@@ -56,14 +56,15 @@ export const ComplianceAssistantView: React.FC<ComplianceAssistantViewProps> = (
     {
       id: 'welcome',
       role: 'assistant',
-      text: `Hello! I am your **Jiangnan Hotpot / Imperial Kitchen Group** Compliance Intelligence Assistant. 
+      text: `Hello! I am your **L&D Virtual Support** for **Jiangnan Hotpot / Imperial Kitchen Group Inc.**
 
 ⚡ **Speed Mode: Ultra-Fast Active (Gemini 3.1 Flash Lite)**
-I cover **all 33 documents in file**:
+I cover **all 34 documents in file**:
+* **1 Regulatory Act Guide:** RA 10611 (Food Safety Act of 2013)
 * **21 Company Policies:** IKQAP#001 through IKQAP#021
 * **12 Standard Operating Procedures:** IKQA-SOP#001 through IKQA-SOP#012
 
-Ask me any specific question about food retention samples, wire slicer procedures, handwashing double-wash, FEFO precedence, allergen alerts, or temperature control!`,
+Ask me any specific question about RA 10611, food retention samples, wire slicer procedures, handwashing double-wash, FEFO precedence, allergen alerts, or temperature control!`,
     },
   ]);
 
@@ -255,7 +256,7 @@ Ask me any specific question about food retention samples, wire slicer procedure
 * **Cold Storage:** Refrigerators strictly at 0°C to 4°C; Freezers at -18°C or below.
 * **15-Minute Rule:** Cold deliveries must reach cold storage within 15 minutes of dock arrival.
 * **Danger Zone (5°C to 60°C):** High-risk foods must never stay >1 hour cumulative.
-* **Handwashing:** 20-second wash + Restroom Double Wash method (IKQA-SOP#001).
+* **Handwashing:** 40–60 second wash + Restroom Double Wash method (IKQA-SOP#001).
 * **Retention Samples:** 100-150mL broth, 100g meats held 5-7 days under lock (IKQA-SOP#011).`,
                   isStreaming: false,
                 }
@@ -489,14 +490,14 @@ Ask me any specific question about food retention samples, wire slicer procedure
           <div>
             <div className="flex items-center gap-1.5">
               <h2 className="text-sm font-black text-white tracking-tight">
-                AI Compliance Assistant
+                L&D Virtual Support
               </h2>
               <span className="px-1.5 py-0.2 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800/60">
-                33 Docs Grounded
+                34 Docs Grounded
               </span>
             </div>
             <p className="text-[11px] text-slate-300">
-              Covers all 21 Policies (IKQAP#001-#021) & 12 SOPs (IKQA-SOP#001-#012)
+              Covers RA 10611, 21 Policies (IKQAP#001-#021) & 12 SOPs (IKQA-SOP#001-#012)
             </p>
           </div>
         </div>

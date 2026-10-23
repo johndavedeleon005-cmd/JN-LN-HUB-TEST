@@ -53,8 +53,9 @@ export const QuickReferenceView: React.FC = () => {
   const [activeSection, setActiveSection] = useState<SectionId>('handwashing');
   const [filterType, setFilterType] = useState<'all' | 'sop' | 'policy'>('all');
 
-  // Interactive 20-Second Handwashing Practice Timer
-  const [washTimer, setWashTimer] = useState<number>(20);
+  // Interactive 40-60 Second Handwashing Practice Timer
+  const [targetDuration, setTargetDuration] = useState<40 | 60>(60);
+  const [washTimer, setWashTimer] = useState<number>(60);
   const [isTimerRunning, setIsTimerRunning] = useState<boolean>(false);
   const [timerCompleted, setTimerCompleted] = useState<boolean>(false);
 
@@ -73,15 +74,22 @@ export const QuickReferenceView: React.FC = () => {
     };
   }, [isTimerRunning, washTimer]);
 
+  const handleSelectTarget = (dur: 40 | 60) => {
+    setTargetDuration(dur);
+    setIsTimerRunning(false);
+    setTimerCompleted(false);
+    setWashTimer(dur);
+  };
+
   const handleStartTimer = () => {
-    setWashTimer(20);
+    setWashTimer(targetDuration);
     setTimerCompleted(false);
     setIsTimerRunning(true);
   };
 
   const handleResetTimer = () => {
     setIsTimerRunning(false);
-    setWashTimer(20);
+    setWashTimer(targetDuration);
     setTimerCompleted(false);
   };
 
@@ -205,14 +213,39 @@ export const QuickReferenceView: React.FC = () => {
             <div className="space-y-1 text-center sm:text-left">
               <span className="text-[10px] uppercase font-bold text-cyan-400 tracking-wider flex items-center gap-1 justify-center sm:justify-start">
                 <Droplets className="w-3.5 h-3.5" />
-                <span>Audited Skill Drill</span>
+                <span>Audited Skill Drill • Standard: 40–60 Seconds</span>
               </span>
               <h3 className="text-sm font-bold text-white">
-                20-Second Handwashing Practice Timer
+                40–60 Second Handwashing Practice Timer
               </h3>
               <p className="text-xs text-slate-300">
-                10 full seconds of vigorous scrubbing (wrists, nails, between fingers) + 10s rinse & dry.
+                Complete 40 to 60 seconds total wash (vigorous scrubbing of palms, wrists, nails &amp; between fingers, plus thorough rinse &amp; single-use paper towel dry).
               </p>
+              <div className="flex items-center justify-center sm:justify-start gap-2 pt-1">
+                <span className="text-[10px] text-slate-400 font-semibold">Timer Target:</span>
+                <button
+                  type="button"
+                  onClick={() => handleSelectTarget(40)}
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition-all ${
+                    targetDuration === 40
+                      ? 'bg-cyan-600 text-white border-cyan-400'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                  }`}
+                >
+                  40s (Min Standard)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleSelectTarget(60)}
+                  className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border transition-all ${
+                    targetDuration === 60
+                      ? 'bg-cyan-600 text-white border-cyan-400'
+                      : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
+                  }`}
+                >
+                  60s (Full Standard)
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center gap-3">
@@ -239,7 +272,7 @@ export const QuickReferenceView: React.FC = () => {
                     className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs flex items-center gap-1.5 shadow"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
-                    <span>{timerCompleted ? 'Wash Again' : 'Start Wash'}</span>
+                    <span>{timerCompleted ? 'Wash Again' : `Start ${targetDuration}s Wash`}</span>
                   </button>
                 ) : (
                   <button
@@ -252,7 +285,7 @@ export const QuickReferenceView: React.FC = () => {
                 )}
                 {timerCompleted && (
                   <span className="text-[10px] text-emerald-400 font-bold text-center">
-                    PASSED QA!
+                    PASSED QA! ({targetDuration}s)
                   </span>
                 )}
               </div>
@@ -263,14 +296,14 @@ export const QuickReferenceView: React.FC = () => {
           <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-3">
             <h3 className="text-sm font-bold text-white flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-cyan-400" />
-              <span>Six-Step 20-Second Technique (IKQA-SOP#001 Section 4)</span>
+              <span>Six-Step 40–60 Second Technique (IKQA-SOP#001 Section 3)</span>
             </h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
               {[
                 { step: '1', title: 'Wet Hands', desc: 'Warm potable water (38°C - 43°C).' },
                 { step: '2', title: 'Liquid Soap', desc: 'Apply antimicrobial liquid soap. (No bar soap!)' },
-                { step: '3', title: 'Scrub 10s', desc: 'Vigorously rub palms, wrists, fingers, under nails.' },
+                { step: '3', title: 'Scrub Vigorously', desc: 'Vigorously rub palms, wrists, fingers, under nails (40–60s total wash).' },
                 { step: '4', title: 'Rinse Well', desc: 'Clean running water flowing fingertips down.' },
                 { step: '5', title: 'Single Towel', desc: 'Dry thoroughly with single-use paper towel.' },
                 { step: '6', title: 'Turn Tap Off', desc: 'Use paper towel as barrier to close faucet.' },
@@ -297,7 +330,7 @@ export const QuickReferenceView: React.FC = () => {
                 <span>Restroom Double Wash Method</span>
               </div>
               <p className="text-xs text-slate-200 leading-relaxed">
-                Employees leaving the comfort room <strong>MUST</strong> wash hands once inside the restroom, and immediately perform a <strong>second complete 20-second wash</strong> at the kitchen handwash sink before handling food or clean wares.
+                Employees leaving the comfort room <strong>MUST</strong> wash hands once inside the restroom, and immediately perform a <strong>second complete 40–60 second wash</strong> at the kitchen handwash sink before handling food or clean wares.
               </p>
               <div className="text-[10px] font-semibold text-red-300 bg-red-900/40 p-2 rounded-lg border border-red-800/40">
                 ⚠️ Automatic Contamination: Any food touched after a missed handwash is deemed adulterated and must be immediately discarded.

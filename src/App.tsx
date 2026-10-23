@@ -14,6 +14,7 @@ import { PdfViewerModal } from './components/PdfViewerModal';
 import { ConfidentialityPopup } from './components/ConfidentialityPopup';
 import { StoreDocumentLockModal } from './components/StoreDocumentLockModal';
 import { WelcomeTrainingHubModal } from './components/WelcomeTrainingHubModal';
+import { SpotTheHazardGame } from './components/SpotTheHazardGame';
 import {
   Search,
   Bookmark,
@@ -28,6 +29,7 @@ import {
   Headphones,
   SlidersHorizontal,
   X,
+  Gamepad2,
 } from 'lucide-react';
 
 export default function App() {
@@ -285,6 +287,9 @@ export default function App() {
           togglePhoneFrame={() => setIsPhoneFrame((prev) => !prev)}
           onOpenAssistant={() => setIsAssistantOpen(true)}
           onOpenWelcomeModal={() => setIsWelcomeOpen(true)}
+          documents={documents}
+          activeDoc={selectedDoc}
+          onSelectDoc={(d) => handleInitiateViewDoc(d)}
         />
 
         {/* Content Body */}
@@ -302,6 +307,8 @@ export default function App() {
               staffPosition={staffPosition}
               staffBranch={staffBranch}
               onOpenPdfModal={(d) => handleInitiateViewPdf(d)}
+              allDocuments={documents}
+              onSelectDoc={(d) => handleInitiateViewDoc(d)}
             />
           ) : (
             <div className="p-4 space-y-4">
@@ -359,27 +366,30 @@ export default function App() {
                         </span>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Search Bar */}
-                  <div className="relative">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                    <input
-                      id="main-search-input"
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search policy code, title, allergen, temp, towel color..."
-                      className="w-full bg-slate-900 border border-slate-800 focus:border-red-500/80 rounded-2xl pl-10 pr-10 py-3 text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none transition-colors shadow-inner"
-                    />
-                    {searchQuery && (
+                    {/* 8-Bit Spot the Hazard Mini-Game Callout Bar */}
+                    <div className="mt-3 pt-3 border-t border-slate-800/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-slate-950/80 p-3 rounded-2xl border border-amber-500/40">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-center shrink-0">
+                          <Gamepad2 className="w-5 h-5 text-amber-400" />
+                        </div>
+                        <div>
+                          <span className="font-mono text-[10px] font-black text-amber-400 uppercase block">
+                            8-BIT ARCADE TRAINING · WITH CHIPTUNE MUSIC
+                          </span>
+                          <p className="text-xs font-bold text-white">
+                            Spot the Hazard: Hotpot Kitchen Safety Mini-Game
+                          </p>
+                        </div>
+                      </div>
                       <button
-                        onClick={() => setSearchQuery('')}
-                        className="p-1 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white absolute right-3 top-1/2 -translate-y-1/2"
+                        onClick={() => setActiveTab('game')}
+                        className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-mono font-black text-xs border-2 border-amber-200 shadow-[0_3px_0_#92400e] active:translate-y-0.5 transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shrink-0"
                       >
-                        <X className="w-4 h-4" />
+                        <Gamepad2 className="w-4 h-4" />
+                        <span>PLAY 8-BIT GAME</span>
                       </button>
-                    )}
+                    </div>
                   </div>
 
                   {/* Document Type Selector Tabs */}
@@ -493,19 +503,67 @@ export default function App() {
                     </div>
 
                     {filteredDocuments.length > 0 ? (
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {filteredDocuments.map((doc) => (
-                          <DocumentCard
-                            key={doc.id}
-                            doc={doc}
-                            onSelect={(d) => handleInitiateViewDoc(d)}
-                            isBookmarked={bookmarkedIds.includes(doc.id)}
-                            onToggleBookmark={handleToggleBookmark}
-                            isRead={readDocIds.includes(doc.id)}
-                            onQuickTTS={handleQuickTTS}
-                            onOpenPdf={handleInitiateViewPdf}
-                          />
-                        ))}
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          {filteredDocuments.map((doc) => (
+                            <DocumentCard
+                              key={doc.id}
+                              doc={doc}
+                              onSelect={(d) => handleInitiateViewDoc(d)}
+                              isBookmarked={bookmarkedIds.includes(doc.id)}
+                              onToggleBookmark={handleToggleBookmark}
+                              isRead={readDocIds.includes(doc.id)}
+                              onQuickTTS={handleQuickTTS}
+                              onOpenPdf={handleInitiateViewPdf}
+                            />
+                          ))}
+                        </div>
+
+                        {/* Related Documents in Same Category when searching */}
+                        {searchQuery.trim() && (() => {
+                          const matchedIds = new Set(filteredDocuments.map((d) => d.id));
+                          const matchedCategories = new Set(filteredDocuments.map((d) => d.category));
+                          const relatedInCat = documents
+                            .filter((d) => !matchedIds.has(d.id) && matchedCategories.has(d.category))
+                            .slice(0, 4);
+                          if (relatedInCat.length === 0) return null;
+                          return (
+                            <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-4 space-y-2.5">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-slate-200">
+                                  Related Documents in Same Category
+                                </span>
+                                <span className="text-[10px] text-slate-400">
+                                  Based on your search results
+                                </span>
+                              </div>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {relatedInCat.map((rel) => (
+                                  <button
+                                    key={rel.id}
+                                    onClick={() => handleInitiateViewDoc(rel)}
+                                    className="text-left p-2.5 rounded-xl bg-slate-950/80 hover:bg-slate-800/80 border border-slate-800 hover:border-red-500/40 transition-all flex items-center justify-between gap-2"
+                                  >
+                                    <div className="min-w-0">
+                                      <div className="flex items-center gap-1.5">
+                                        <span className="text-[10px] font-mono font-bold text-red-300 bg-red-950/60 px-1.5 py-0.5 rounded border border-red-800/50">
+                                          {rel.code}
+                                        </span>
+                                        <span className="text-[10px] text-slate-400 truncate">
+                                          {rel.category}
+                                        </span>
+                                      </div>
+                                      <p className="text-xs font-bold text-slate-200 truncate mt-1">
+                                        {rel.title}
+                                      </p>
+                                    </div>
+                                    <FileText className="w-4 h-4 text-slate-500 flex-shrink-0" />
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </div>
                     ) : (
                       <div className="text-center py-12 bg-slate-900/40 border border-dashed border-slate-800 rounded-3xl p-6 space-y-3">
@@ -534,6 +592,17 @@ export default function App() {
 
               {/* TAB 2: QUICK REFERENCE */}
               {activeTab === 'quickref' && <QuickReferenceView />}
+
+              {/* TAB: 8-BIT SPOT THE HAZARD MINI-GAME */}
+              {activeTab === 'game' && (
+                <SpotTheHazardGame
+                  documents={documents}
+                  staffName={staffName}
+                  staffPosition={staffPosition}
+                  staffBranch={staffBranch}
+                  onOpenDoc={(d) => handleInitiateViewDoc(d)}
+                />
+              )}
 
               {/* TAB 3: AUDIO READER (GEMINI 3.8 FLASH TTS) */}
               {activeTab === 'audio' && (

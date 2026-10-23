@@ -12,9 +12,9 @@ export const ALL_SOP_DOCUMENTS: FoodSafetyDoc[] = [
     effectiveDate: 'June 22, 2026',
     pdfUrl: '/assets/aistudio/IKQA-SOP_001__Handwashing.docx_04f3bb68.pdf',
     summary:
-      'Scientifically validated 6-step hand hygiene methodology lasting at least 20 seconds. Mandates the restroom Double Wash Method, strict prohibition of bar soap, critical control points (CCPs), and automatic adulteration/disposal of food handled during hygiene breaches.',
+      'Scientifically validated 6-step hand hygiene methodology lasting 40 to 60 seconds. Mandates the restroom Double Wash Method, strict prohibition of bar soap, critical control points (CCPs), and automatic adulteration/disposal of food handled during hygiene breaches.',
     keyTakeaways: [
-      'Six-Step 20-Second Technique: Wet hands with potable water -> Apply liquid antimicrobial soap -> Rub vigorously for 10s (backs, wrists, webbing, nails) -> Rinse thoroughly -> Dry with paper towel/air dryer -> Turn off tap using towel.',
+      'Six-Step 40–60 Second Technique: Wet hands with potable water -> Apply liquid antimicrobial soap -> Rub vigorously for 20s+ (40–60s total procedure: backs, wrists, webbing, nails) -> Rinse thoroughly -> Dry with paper towel/air dryer -> Turn off tap using towel.',
       'Restroom Double Wash Method: Wash first in restroom immediately after use, then perform a second complete wash at the kitchen handwash station before entering production.',
       'Bar Soap Strictly Prohibited: Only liquid antimicrobial soap in dispensers allowed; bar soap harbors bacterial reservoirs.',
       'Unobstructed Handwash Sinks: Sinks must remain 100% accessible with no boxes or trash bins blocking them; strictly forbidden for food prep or mop water disposal.',
@@ -23,8 +23,8 @@ export const ALL_SOP_DOCUMENTS: FoodSafetyDoc[] = [
     ],
     quickRules: [
       {
-        title: '6-Step 20s Method',
-        rule: 'Wet, apply antimicrobial soap, scrub vigorously for 10s (including wrists & nails), rinse, dry with towel, turn off tap with paper.',
+        title: '6-Step 40–60s Method',
+        rule: 'Wet, apply antimicrobial soap, scrub vigorously (including wrists & nails), rinse, dry with towel, turn off tap with paper (40–60s total).',
         type: 'critical',
       },
       {
@@ -49,13 +49,13 @@ export const ALL_SOP_DOCUMENTS: FoodSafetyDoc[] = [
         id: '2',
         title: '2. Responsibilities',
         content:
-          'All Employees: Personally execute the 20-second handwashing protocol exactly as prescribed.\nRestaurant Managers: Ensure structural integrity, continuous floor monitoring, and guaranteed 100% provisioning of antimicrobial soap, paper towels, and potable water.',
+          'All Employees: Personally execute the 40–60 second handwashing protocol exactly as prescribed.\nRestaurant Managers: Ensure structural integrity, continuous floor monitoring, and guaranteed 100% provisioning of antimicrobial soap, paper towels, and potable water.',
       },
       {
         id: '3',
-        title: '3. The Six (6) Step Handwashing Method (20 Seconds)',
+        title: '3. The Six (6) Step Handwashing Method (40–60 Seconds)',
         content:
-          'Step 1 (Wet Hands): Use clean, running potable water.\nStep 2 (Apply Soap): Use a generous amount of liquid antimicrobial soap (bar soap is strictly banned).\nStep 3 (Scrub): Rub hands vigorously for 10 seconds. Scrub backs of hands, wrists, between fingers, and under fingernails.\nStep 4 (Rinse): Rinse thoroughly under clean running water to remove all soap and loosened soil.\nStep 5 (Dry): Use a single-use paper towel or high-velocity HEPA electric air dryer.\nStep 6 (Turn Off Tap): Use a single-use paper towel to turn off the faucet and open doors to prevent re-contaminating clean hands.',
+          'Step 1 (Wet Hands): Use clean, running potable water.\nStep 2 (Apply Soap): Use a generous amount of liquid antimicrobial soap (bar soap is strictly banned).\nStep 3 (Scrub): Rub hands vigorously (total handwashing duration of 40–60 seconds). Scrub backs of hands, wrists, between fingers, and under fingernails.\nStep 4 (Rinse): Rinse thoroughly under clean running water to remove all soap and loosened soil.\nStep 5 (Dry): Use a single-use paper towel or high-velocity HEPA electric air dryer.\nStep 6 (Turn Off Tap): Use a single-use paper towel to turn off the faucet and open doors to prevent re-contaminating clean hands.',
       },
       {
         id: '4',
@@ -83,17 +83,17 @@ export const ALL_SOP_DOCUMENTS: FoodSafetyDoc[] = [
         id: '6',
         title: '6. Facility Infrastructure & Multilingual Signage',
         content:
-          'Sinks must be completely unobstructed with zero physical barriers. Prominent eye-level "Wash Hands" signage must be posted in all primary languages spoken by staff, supplemented by visual diagrams illustrating the 20-second scrubbing technique.',
+          'Sinks must be completely unobstructed with zero physical barriers. Prominent eye-level "Wash Hands" signage must be posted in all primary languages spoken by staff, supplemented by visual diagrams illustrating the 40–60 second scrubbing technique.',
       },
     ],
     tables: [
       {
-        title: 'Six (6) Step Handwashing Protocol (20-Second Duration)',
+        title: 'Six (6) Step Handwashing Protocol (40–60 Second Duration)',
         headers: ['Step', 'Action', 'Standard Description'],
         rows: [
           ['Step 1', 'Wet Hands', 'Use clean, running potable water.'],
           ['Step 2', 'Apply Soap', 'Use generous amount of liquid antimicrobial soap (no bar soap).'],
-          ['Step 3', 'Scrub', 'Rub vigorously for 10s: backs of hands, wrists, between fingers, nails.'],
+          ['Step 3', 'Scrub', 'Rub vigorously (40–60s total wash): backs of hands, wrists, between fingers, nails.'],
           ['Step 4', 'Rinse', 'Rinse thoroughly under clean running water to remove soap & soil.'],
           ['Step 5', 'Dry', 'Use single-use paper towel or HEPA electric air dryer.'],
           ['Step 6', 'Turn Off Tap', 'Use paper towel to turn off faucet & open door handle.'],
@@ -134,7 +134,7 @@ export const ALL_SOP_DOCUMENTS: FoodSafetyDoc[] = [
         explanation: 'Any food handled during a hygiene breach is legally classified as adulterated and must be discarded immediately.',
       },
     ],
-    tags: ['SOP', 'Handwashing', 'Double Wash', 'CCPs', 'Antimicrobial Soap', '20 Seconds'],
+    tags: ['SOP', 'Handwashing', 'Double Wash', 'CCPs', 'Antimicrobial Soap', '40-60 Seconds'],
   },
 
   // IKQA-SOP#002 Personnel Hygiene
@@ -731,7 +731,7 @@ export const ALL_SOP_DOCUMENTS: FoodSafetyDoc[] = [
         id: '3',
         title: '3. Jewelry & Mobile Electronics',
         content:
-          'Jewelry: Bare below the elbows. Plain wedding band only. Facial piercings must be removed or covered with metal-detectable plaster.\nMobile Phones: Strictly prohibited in food areas. Returning from personal phone use requires complete 20-second handwashing.',
+          'Jewelry: Bare below the elbows. Plain wedding band only. Facial piercings must be removed or covered with metal-detectable plaster.\nMobile Phones: Strictly prohibited in food areas. Returning from personal phone use requires complete 40–60 second handwashing.',
       },
       {
         id: '4',
@@ -869,7 +869,7 @@ export const ALL_SOP_DOCUMENTS: FoodSafetyDoc[] = [
       'Sanitation Towels: Blue = FOH Dining; Yellow = Handwash Sinks; Green = BOH Kitchen; White = Clean Wares; Red = Restroom ONLY.',
       'Chronological Batching Sequence: Shift Start = Clean Run (allergen-free, RTE items, clean vegetables); Shift End = Raw/Allergen Run.',
       'Cooking Line Boundary: Line of demarcation. Line cooks must use entirely separate dedicated tongs & plates for raw protein placement versus cooked protein retrieval.',
-      'Hygienic Reset: 20-second handwashing + fresh gloves when switching tasks or food groups.',
+      'Hygienic Reset: 40–60 second handwashing + fresh gloves when switching tasks or food groups.',
       'Spill Response: Cordon off area immediately, deploy color-coded spill kit, wash/rinse/sanitize before resuming.',
     ],
     quickRules: [
@@ -912,7 +912,7 @@ export const ALL_SOP_DOCUMENTS: FoodSafetyDoc[] = [
         id: '4',
         title: '4. Chronological Batching & Hygienic Reset',
         content:
-          'Shift Start (Clean Run) processes allergen-free and RTE items. Shift End (Allergen/Raw Run) processes marinations. 20-second hygienic reset with fresh gloves required when switching tasks.',
+          'Shift Start (Clean Run) processes allergen-free and RTE items. Shift End (Allergen/Raw Run) processes marinations. 40–60 second hygienic reset with fresh gloves required when switching tasks.',
       },
     ],
     tables: [

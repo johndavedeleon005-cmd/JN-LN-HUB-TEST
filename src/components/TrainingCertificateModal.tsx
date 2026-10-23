@@ -266,8 +266,12 @@ export const TrainingCertificateModal: React.FC<TrainingCertificateModalProps> =
             {/* Certificate Header */}
             <div className="text-center relative z-10 space-y-2">
               <div className="inline-flex items-center justify-center gap-2 mb-1">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-700 via-red-800 to-amber-800 flex items-center justify-center shadow-md border border-amber-400">
-                  <Flame className="w-6 h-6 text-amber-200 fill-amber-200" />
+                <div className="w-12 h-12 rounded-xl overflow-hidden bg-black flex items-center justify-center shadow-md border-2 border-amber-500/80">
+                  <img
+                    src="./assets/aistudio/JN_HOTPOT_LOGO_d76d212e.webp"
+                    alt="Jiangnan Hotpot Logo"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
 

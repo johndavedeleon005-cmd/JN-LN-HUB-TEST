@@ -1,5 +1,274 @@
 [
   {
+    "id": "ra-10611-food-safety-act-2013",
+    "code": "RA 10611",
+    "title": "Food Safety Act of 2013 (Republic Act No. 10611)",
+    "type": "guide",
+    "category": "Corporate & Quality",
+    "revision": 1,
+    "effectiveDate": "August 23, 2013 (IRR: Feb 20, 2015)",
+    "pdfUrl": "/assets/aistudio/IKQAP_001__Food_Safety_Policy.docx_c47cb5a0.pdf",
+    "summary": "Official Philippine statutory reference for Republic Act No. 10611 (\"An Act to Strengthen the Food Safety Regulatory System in the Country to Protect Consumer Health and Facilitate Market Access of Local Foods and Food Products\"). Establishes the legal obligations of Food Business Operators (FBOs), farm-to-fork HACCP & GMP standards, regulatory roles of DA, DOH-FDA, and DILG/LGUs, mandatory Food Safety Compliance Officer (FSCO) oversight, traceability, and statutory criminal/administrative penalties.",
+    "keyTakeaways": [
+      "Primary Legal Responsibility (Sec. 13–14): Food Business Operators (FBOs) bear primary responsibility for ensuring that all food handled and served satisfies Philippine food safety law.",
+      "Farm-to-Fork Preventive Controls: Mandates science-based Risk Analysis, Good Manufacturing Practices (GMP), Good Hygienic Practices (GHP), SSOPs, and Hazard Analysis & Critical Control Points (HACCP).",
+      "Tri-Agency Jurisdiction: DA (NMIS, BFAR, BPI) oversees raw/post-harvest meats, fish & crops; DOH (FDA) oversees processed & prepackaged foods; DILG & LGUs enforce PD 856 (Sanitation Code), Sanitary Permits, and Health Certificates.",
+      "Mandatory FSCO & Training (Sec. 28): Requires certified Food Safety Compliance Officers (FSCO) and mandatory food safety training programs for all restaurant and commissary personnel.",
+      "Traceability & Mandatory Recall: FBOs must maintain \"One Step Back, One Step Forward\" traceability and immediately withdraw/recall unsafe food while alerting regulatory authorities.",
+      "Statutory Penalties (Sec. 38): Fines ranging from ₱50,000 to ₱500,000, business permit suspension/revocation, establishment closure, and imprisonment up to 6 years for violations resulting in consumer illness or death."
+    ],
+    "quickRules": [
+      {
+        "title": "Primary FBO Liability (Sec. 13)",
+        "rule": "Restaurant management and food handlers are legally accountable for food safety at every stage from receiving and cold storage to table service.",
+        "type": "critical"
+      },
+      {
+        "title": "Mandatory Permits & FSCO",
+        "rule": "All branches must maintain valid LGU Sanitary Permits, Employee Health Certificates, NMIS/FDA-certified suppliers, and designated FSCO oversight.",
+        "type": "critical"
+      },
+      {
+        "title": "Criminal & Financial Sanctions (Sec. 38)",
+        "rule": "Serving adulterated or contaminated food carries fines up to ₱500,000, store closure, and up to 6 years imprisonment.",
+        "type": "warning"
+      }
+    ],
+    "sections": [
+      {
+        "id": "1",
+        "title": "1. Declaration of Policy & Statutory Objectives (Articles I & II)",
+        "content": "Section 15, Article II of the 1987 Philippine Constitution declares that the State shall protect and promote the right to health of the people. Republic Act No. 10611 (signed August 23, 2013; Implementing Rules and Regulations Joint DA-DOH Administrative Order No. 2015-0007) establishes a comprehensive, science-based food safety regulatory regime.",
+        "bulletPoints": [
+          "1.1 Protection of Public Health: Protect the public from foodborne and waterborne illnesses and unsanitary, unwholesome, misbranded, or adulterated foods.",
+          "1.2 Consumer & Industry Confidence: Enhance industry and consumer confidence in the food regulatory system across primary production, commissary processing, warehousing, and restaurant food service.",
+          "1.3 Science-Based Standards: Promote fair trade and economic growth by grounding all food safety controls in risk analysis, Codex Alimentarius standards, and farm-to-fork traceability."
+        ]
+      },
+      {
+        "id": "2",
+        "title": "2. Key Statutory Definitions (Article II, Section 4)",
+        "content": "Essential legal definitions governing restaurant and commissary operations under RA 10611:",
+        "bulletPoints": [
+          "2.1 Food Business Operator (FBO): Any person, corporation, or entity (including Imperial Kitchen Group Inc. / Jiangnan Hotpot) undertaking to carry out any activity related to any stage of production, processing, storage, distribution, and preparation of food.",
+          "2.2 Food Safety: The assurance that food will not cause harm to the consumer when it is prepared or eaten according to its intended use.",
+          "2.3 Food Hygiene: The measures and conditions necessary to control hazards and to ensure fitness for human consumption of a foodstuff taking into account its intended use.",
+          "2.4 Food Safety Compliance Officer (FSCO): A trained and certified specialist designated by the FBO to oversee internal compliance, HACCP monitoring, hygiene audits, and regulatory coordination.",
+          "2.5 Adulterated Food: Food that contains any poisonous or deleterious substance, filthy or decomposed material, unapproved chemical/additive, or has been prepared, packed, or held under unsanitary conditions whereby it may have become contaminated.",
+          "2.6 Traceability: The ability to trace and follow a food, feed, food-producing animal, or substance intended to be incorporated into a food through all stages of production, processing, and distribution."
+        ]
+      },
+      {
+        "id": "3",
+        "title": "3. Basic Principles of Food Safety (Article III, Sections 6–12)",
+        "content": "RA 10611 mandates that all food safety standards and operational SOPs follow five core principles:",
+        "bulletPoints": [
+          "3.1 Food Chain / Farm-to-Fork Approach: Food safety is an integrated responsibility spanning raw material sourcing, transport cold chain, receiving inspection, storage, kitchen preparation, and dining service.",
+          "3.2 Science-Based Risk Analysis: Composed of Risk Assessment (scientific evaluation of biological, chemical, and physical hazards), Risk Management (selecting control measures & CCPs), and Risk Communication (allergen warnings, training, and alerts).",
+          "3.3 Preventive Measures (HACCP, GMP, GHP): Focus on preventing contamination before it occurs rather than relying solely on end-product testing.",
+          "3.4 Precautionary Principle: Where scientific uncertainty exists regarding potential harm to human health, provisional risk management measures (such as immediate quarantine and hold tags) must be taken immediately.",
+          "3.5 Transparency & Consumer Protection: Clear labeling, accurate menu disclosure, and prompt notification of public health risks."
+        ]
+      },
+      {
+        "id": "4",
+        "title": "4. Principal Responsibilities of Food Business Operators (Article IV, Sections 13–14)",
+        "content": "Under Section 13 and Section 14 of RA 10611, Food Business Operators (FBOs) hold primary legal accountability for the safety of food in their establishments:",
+        "bulletPoints": [
+          "4.1 Compliance with Food Law: Ensure that food satisfies the requirements of Philippine food law relevant to their activities and verify that such requirements are met through daily monitoring logs.",
+          "4.2 Food Safety Control Systems: Establish and implement Good Hygienic Practices (GHP), Good Manufacturing Practices (GMP), Sanitation Standard Operating Procedures (SSOP), and HACCP-based systems.",
+          "4.3 Traceability System (\"One Step Back, One Step Forward\"): Identify any supplier from whom they have been supplied with raw materials (Lot/Batch No., Delivery Date, NMIS/FDA certs) and track dispatches to branches.",
+          "4.4 Mandatory Withdrawal & Recall Duty: If an FBO considers or has reason to believe that food it has imported, produced, processed, or distributed is not in compliance with food safety requirements, it shall immediately initiate procedures to withdraw the food from the market and inform the competent regulatory authority.",
+          "4.5 Cooperation with Authorities: Allow unannounced entry of regulatory inspectors, provide requested temperature/sanitation records, and collaborate on risk reduction."
+        ]
+      },
+      {
+        "id": "5",
+        "title": "5. Philippine Food Safety Regulatory Agencies & Jurisdiction (Article V, Sections 15–19)",
+        "content": "RA 10611 delineates specific regulatory mandates across three primary executive departments and coordinates them through the Food Safety Regulation Coordinating Board (FSRCB):",
+        "bulletPoints": [
+          "5.1 Department of Agriculture (DA): Responsible for food safety in the primary production and post-harvest stages of food supply chains. Key agencies include the National Meat Inspection Service (NMIS) for fresh, chilled, and frozen meats; Bureau of Fisheries and Aquatic Resources (BFAR) for fish and seafood; and Bureau of Plant Industry (BPI) for fresh vegetables and agricultural crops.",
+          "5.2 Department of Health (DOH): Responsible for the safety of processed and prepackaged foods, foods locally produced or imported under this category, and the conduct of epidemiological studies and disease outbreak investigations. Enforced primarily through the Food and Drug Administration (FDA) Center for Food Regulation and Research (issuing LTO and CPR).",
+          "5.3 Department of the Interior and Local Government (DILG) & Local Government Units (LGUs): Responsible for supervising the enforcement of food safety and sanitary rules within territorial jurisdictions in collaboration with DA and DOH. LGUs enforce Presidential Decree No. 856 (Code on Sanitation of the Philippines) across restaurants, hotpot dining establishments, commissaries, markets, and food handlers (issuing Sanitary Permits and City/Municipal Health Certificates).",
+          "5.4 Food Safety Regulation Coordinating Board (FSRCB): Inter-agency body co-chaired by the DOH and DA Secretaries (with DILG, DOST, DTI, and industry representatives) that harmonizes standards and coordinates crisis management during foodborne outbreaks."
+        ]
+      },
+      {
+        "id": "6",
+        "title": "6. Training, Consumer Education & Official Inspections (Articles VI–VIII)",
+        "content": "Skills development and risk-based inspections are legally mandated under Sections 26 to 31 of the Act:",
+        "bulletPoints": [
+          "6.1 Mandatory Training of Food Handlers & FSCOs: All food business operators, food handlers, and supervisors must undergo mandatory and continuous training on safe food handling, hygiene, allergen control, and HACCP principles.",
+          "6.2 Role of Learning & Development (L&D): Internal training programs conducted by certified Food Safety Compliance Officers (FSCOs) fulfill the statutory mandate to ensure every kitchen and service staff member is qualified prior to deployment.",
+          "6.3 Risk-Based Official Controls: Regulatory inspections by LGU Sanitary Inspectors, FDA Officers, and NMIS Meat Control Officers are conducted regularly, without prior notice, based on risk classification and compliance history.",
+          "6.4 Foodborne Illness Surveillance & Retention Samples: Daily food retention samples (IKQA-SOP#011) and temperature/sanitation logs serve as vital forensic and legal documentation during DOH/LGU epidemiological investigations."
+        ]
+      },
+      {
+        "id": "7",
+        "title": "7. Prohibited Acts & Criminal/Administrative Penalties (Article XI, Sections 37–38)",
+        "content": "Section 37 defines unlawful acts under Philippine law, and Section 38 enforces severe financial, administrative, and criminal penalties:",
+        "bulletPoints": [
+          "7.1 Prohibited Acts (Sec. 37): (a) Producing, handling, or serving food that fails to comply with food safety standards; (b) Operating a food business without appropriate authorizations (LGU Sanitary Permit, FDA LTO/CPR, NMIS accreditation); (c) Failing to immediately recall unsafe food or concealing a food safety hazard; (d) Refusing access to regulatory inspectors during official controls; (e) Falsifying temperature logs, expiry dates, health certificates, or compliance records.",
+          "7.2 Graduated Monetary Fines & Permit Suspension (Sec. 38): Fines start at ₱50,000–₱100,000 (1st conviction + 1-month permit suspension), escalating to ₱100,000–₱200,000 (2nd conviction + 3-month suspension), and ₱200,000–₱300,000 (3rd conviction + 6-month suspension).",
+          "7.3 Hospitalization or Serious Consumer Illness: If the violation results in hospitalization of a guest, the penalty includes a fine of ₱200,000 to ₱300,000 and imprisonment of up to six (6) months, plus revocation of permits.",
+          "7.4 Death Resulting from Unsafe Food: If a food safety violation results in the death of a consumer, the penalty escalates to a fine of ₱300,000 to ₱500,000, imprisonment of six (6) months and one (1) day up to six (6) years, and permanent revocation of business permits and closure of the food establishment.",
+          "7.5 Corporate Officer & Employee Liability: If the offense is committed by a corporation, the penalty is imposed upon the responsible directors, officers, managers, or employees who participated in or permitted the violation through gross negligence."
+        ]
+      }
+    ],
+    "tables": [
+      {
+        "title": "Philippine Food Safety Regulatory Jurisdiction Matrix (RA 10611 Article V)",
+        "headers": [
+          "Government Agency",
+          "Jurisdiction Stage",
+          "Key Bureaus & Restaurant Compliance Requirements"
+        ],
+        "rows": [
+          [
+            "Department of Agriculture (DA)",
+            "Primary Production & Post-Harvest (Raw Agricultural & Fishery Goods)",
+            "NMIS (Meat Inspection Certificates for beef, pork, poultry), BFAR (seafood), BPI (fresh produce). All raw meats received at stores must carry valid NMIS certificates."
+          ],
+          [
+            "Department of Health (DOH)",
+            "Processed & Prepackaged Foods, Additives, Packaging & Outbreak Epidemiology",
+            "FDA (License to Operate - LTO & Certificate of Product Registration - CPR). All commercial sauces, condiments, and packaged ingredients must be FDA-registered."
+          ],
+          [
+            "DILG & Local Government Units (LGUs)",
+            "Restaurants, Food Service Establishments, Markets & Street Food Enforcement",
+            "City/Municipal Health Office (enforces PD 856 Sanitation Code, issues annual Store Sanitary Permits, Individual Employee Health Certificates, and conducts unannounced sanitary inspections)."
+          ]
+        ]
+      },
+      {
+        "title": "Statutory Fines & Criminal Penalties under RA 10611 (Section 38)",
+        "headers": [
+          "Offense / Severity Classification",
+          "Statutory Monetary Fine",
+          "Administrative & Criminal Sanctions"
+        ],
+        "rows": [
+          [
+            "First Conviction",
+            "₱50,000 to ₱100,000",
+            "Suspension of appropriate authorization / Sanitary Permit for one (1) month."
+          ],
+          [
+            "Second Conviction",
+            "₱100,000 to ₱200,000",
+            "Suspension of appropriate authorization / Sanitary Permit for three (3) months."
+          ],
+          [
+            "Third Conviction",
+            "₱200,000 to ₱300,000",
+            "Suspension of appropriate authorization / Sanitary Permit for six (6) months."
+          ],
+          [
+            "Violation Resulting in Consumer Hospitalization",
+            "₱200,000 to ₱300,000",
+            "Imprisonment of up to six (6) months + immediate revocation of permits and mandatory restitution."
+          ],
+          [
+            "Violation Resulting in Death of a Consumer",
+            "₱300,000 to ₱500,000",
+            "Imprisonment of 6 months and 1 day up to 6 years + permanent closure of the food establishment."
+          ]
+        ]
+      }
+    ],
+    "signatories": {
+      "preparedBy": "John Dave De Leon, FSCO & Lany Ann Nemenzo, FSCO (L&D Specialists)",
+      "reviewedBy": [
+        "Joy Bernardo (L&D Manager)",
+        "Celine Joy Sanchez (QA Specialist)",
+        "Dice Divine Torralba (L&D Coordinator)"
+      ],
+      "approvedBy": "Jack Julius Tiu (President)"
+    },
+    "changeHistory": [
+      {
+        "rev": 1,
+        "date": "October 21, 2026",
+        "author": "Learning and Development Team",
+        "purpose": "Official L&D statutory reference guide on Republic Act No. 10611 (Food Safety Act of 2013)"
+      }
+    ],
+    "quizQuestions": [
+      {
+        "question": "Under Republic Act No. 10611 (Food Safety Act of 2013), who bears the primary legal responsibility for ensuring that food served in a restaurant is safe and compliant?",
+        "options": [
+          "Only the third-party delivery rider",
+          "The Food Business Operator (FBO), management, and food handlers",
+          "The customer dining at the restaurant",
+          "Only external pest control contractors"
+        ],
+        "answerIndex": 1,
+        "explanation": "Sections 13 and 14 of RA 10611 explicitly place primary responsibility on the Food Business Operator (FBO) and its personnel to ensure food safety across all stages under their control."
+      },
+      {
+        "question": "Which Philippine government agencies are responsible for regulating fresh/frozen meat (post-harvest) vs. processed/prepackaged foods under RA 10611?",
+        "options": [
+          "DA (via NMIS) for fresh/frozen meats; DOH (via FDA) for processed and prepackaged foods",
+          "DPWH for fresh meats; DepEd for processed foods",
+          "DOT for raw meats; DOLE for packaged sauces",
+          "Only the barangay tanod regulates both"
+        ],
+        "answerIndex": 0,
+        "explanation": "Article V of RA 10611 assigns primary and post-harvest foods (like raw meat via NMIS) to the Department of Agriculture (DA), and processed/prepackaged foods to the Department of Health (DOH) via the FDA."
+      },
+      {
+        "question": "Which government body enforces Presidential Decree No. 856 (Code on Sanitation) in restaurants and issues Store Sanitary Permits and Employee Health Certificates?",
+        "options": [
+          "Department of Foreign Affairs (DFA)",
+          "DILG and Local Government Units (LGUs) via the City/Municipal Health Office",
+          "Land Transportation Office (LTO)",
+          "Bureau of Customs (BOC)"
+        ],
+        "answerIndex": 1,
+        "explanation": "Under Section 19 of RA 10611, DILG and Local Government Units (LGUs) enforce the Code on Sanitation (PD 856), inspect restaurants, and issue Sanitary Permits and Employee Health Certificates."
+      },
+      {
+        "question": "What is the maximum statutory penalty under Section 38 of RA 10611 if a food safety violation results in the death of a consumer?",
+        "options": [
+          "A verbal warning only",
+          "A fine of ₱500 only",
+          "A fine of ₱300,000 to ₱500,000, imprisonment of 6 months and 1 day up to 6 years, and permanent closure of the establishment",
+          "Community service for 2 hours"
+        ],
+        "answerIndex": 2,
+        "explanation": "Section 38 imposes severe criminal and financial liability—fines of ₱300,000 to ₱500,000, imprisonment up to 6 years, and permanent revocation of business permits—when unsafe food causes death."
+      },
+      {
+        "question": "Which of the following is explicitly classified as a Prohibited Act under Section 37 of the Food Safety Act of 2013?",
+        "options": [
+          "Conducting daily thermometer calibration",
+          "Refusing entry to regulatory inspectors, operating without valid permits, or falsifying food safety records",
+          "Washing hands using the double-wash method",
+          "Segregating raw meats from ready-to-eat foods"
+        ],
+        "answerIndex": 1,
+        "explanation": "Section 37 prohibits producing/serving unsafe food, operating without permits, refusing entry to official inspectors, failing to recall unsafe products, and falsifying safety records."
+      }
+    ],
+    "tags": [
+      "RA 10611",
+      "Food Safety Act of 2013",
+      "Philippine Law",
+      "PD 856",
+      "FDA",
+      "NMIS",
+      "DOH",
+      "DA",
+      "LGU",
+      "FSCO",
+      "Penalties",
+      "HACCP"
+    ]
+  },
+  {
     "id": "ikqap-001",
     "code": "IKQAP#001",
     "title": "Food Safety Policy",
@@ -2173,10 +2442,10 @@
     "revision": 4,
     "effectiveDate": "July 13, 2026",
     "pdfUrl": "/assets/aistudio/IKQAP_018__Good_Manufacturing_Practices.docx_b46b6303.pdf",
-    "summary": "The foundational Good Manufacturing Practices (GMP) framework for the FSMS. Enforces the 20-second 6-step handwashing protocol, restroom Double Wash method, comfort room self-closing isolation, twice-per-shift surface sanitizing, and bifurcated competency verification.",
+    "summary": "The foundational Good Manufacturing Practices (GMP) framework for the FSMS. Enforces the 40–60 second 6-step handwashing protocol, restroom Double Wash method, comfort room self-closing isolation, twice-per-shift surface sanitizing, and bifurcated competency verification.",
     "keyTakeaways": [
       "Universal Scope: Applies to all employees, contractors, visitors across receiving, storage, commissary, line prep, and dining.",
-      "Mandatory Handwashing: 20-second 6-step method before shifts, after handling refuse/chemicals, and after touching hair/face.",
+      "Mandatory Handwashing: 40–60 second 6-step method before shifts, after handling refuse/chemicals, and after touching hair/face.",
       "Restroom \"Double Wash\" Method: Employees must wash hands thoroughly in the restroom and perform a second wash at the handwashing sink upon re-entering kitchen.",
       "Surface Sanitization: All food-contact surfaces must be cleaned and sanitized at least TWICE PER SHIFT.",
       "Clean Zone RPC Rule: Reusable plastic containers (RPCs) must be thoroughly sanitized before crossing into the facility Clean Zone.",
@@ -2211,7 +2480,7 @@
         "title": "2. Personnel Hygiene & Conduct",
         "content": "Behavioral mandates:",
         "bulletPoints": [
-          "20-Second Handwashing: 6-step method with warm water and antibacterial soap.",
+          "40–60 Second Handwashing: 6-step method with warm water and antibacterial soap.",
           "The Restroom \"Double Wash\": Wash in restroom, then wash again at production handwash station.",
           "Jewelry & Grooming: Plain wedding band only; no earrings, bracelets, watches, false nails, or false eyelashes.",
           "Controlled Zone Conduct: Eating, drinking, smoking, and phone use strictly forbidden in production zones."
@@ -2657,9 +2926,9 @@
     "revision": 2,
     "effectiveDate": "June 22, 2026",
     "pdfUrl": "/assets/aistudio/IKQA-SOP_001__Handwashing.docx_04f3bb68.pdf",
-    "summary": "Scientifically validated 6-step hand hygiene methodology lasting at least 20 seconds. Mandates the restroom Double Wash Method, strict prohibition of bar soap, critical control points (CCPs), and automatic adulteration/disposal of food handled during hygiene breaches.",
+    "summary": "Scientifically validated 6-step hand hygiene methodology lasting 40 to 60 seconds. Mandates the restroom Double Wash Method, strict prohibition of bar soap, critical control points (CCPs), and automatic adulteration/disposal of food handled during hygiene breaches.",
     "keyTakeaways": [
-      "Six-Step 20-Second Technique: Wet hands with potable water -> Apply liquid antimicrobial soap -> Rub vigorously for 10s (backs, wrists, webbing, nails) -> Rinse thoroughly -> Dry with paper towel/air dryer -> Turn off tap using towel.",
+      "Six-Step 40–60 Second Technique: Wet hands with potable water -> Apply liquid antimicrobial soap -> Rub vigorously for 20s+ (40–60s total procedure: backs, wrists, webbing, nails) -> Rinse thoroughly -> Dry with paper towel/air dryer -> Turn off tap using towel.",
       "Restroom Double Wash Method: Wash first in restroom immediately after use, then perform a second complete wash at the kitchen handwash station before entering production.",
       "Bar Soap Strictly Prohibited: Only liquid antimicrobial soap in dispensers allowed; bar soap harbors bacterial reservoirs.",
       "Unobstructed Handwash Sinks: Sinks must remain 100% accessible with no boxes or trash bins blocking them; strictly forbidden for food prep or mop water disposal.",
@@ -2668,8 +2937,8 @@
     ],
     "quickRules": [
       {
-        "title": "6-Step 20s Method",
-        "rule": "Wet, apply antimicrobial soap, scrub vigorously for 10s (including wrists & nails), rinse, dry with towel, turn off tap with paper.",
+        "title": "6-Step 40–60s Method",
+        "rule": "Wet, apply antimicrobial soap, scrub vigorously (including wrists & nails), rinse, dry with towel, turn off tap with paper (40–60s total).",
         "type": "critical"
       },
       {
@@ -2692,12 +2961,12 @@
       {
         "id": "2",
         "title": "2. Responsibilities",
-        "content": "All Employees: Personally execute the 20-second handwashing protocol exactly as prescribed.\nRestaurant Managers: Ensure structural integrity, continuous floor monitoring, and guaranteed 100% provisioning of antimicrobial soap, paper towels, and potable water."
+        "content": "All Employees: Personally execute the 40–60 second handwashing protocol exactly as prescribed.\nRestaurant Managers: Ensure structural integrity, continuous floor monitoring, and guaranteed 100% provisioning of antimicrobial soap, paper towels, and potable water."
       },
       {
         "id": "3",
-        "title": "3. The Six (6) Step Handwashing Method (20 Seconds)",
-        "content": "Step 1 (Wet Hands): Use clean, running potable water.\nStep 2 (Apply Soap): Use a generous amount of liquid antimicrobial soap (bar soap is strictly banned).\nStep 3 (Scrub): Rub hands vigorously for 10 seconds. Scrub backs of hands, wrists, between fingers, and under fingernails.\nStep 4 (Rinse): Rinse thoroughly under clean running water to remove all soap and loosened soil.\nStep 5 (Dry): Use a single-use paper towel or high-velocity HEPA electric air dryer.\nStep 6 (Turn Off Tap): Use a single-use paper towel to turn off the faucet and open doors to prevent re-contaminating clean hands."
+        "title": "3. The Six (6) Step Handwashing Method (40–60 Seconds)",
+        "content": "Step 1 (Wet Hands): Use clean, running potable water.\nStep 2 (Apply Soap): Use a generous amount of liquid antimicrobial soap (bar soap is strictly banned).\nStep 3 (Scrub): Rub hands vigorously (total handwashing duration of 40–60 seconds). Scrub backs of hands, wrists, between fingers, and under fingernails.\nStep 4 (Rinse): Rinse thoroughly under clean running water to remove all soap and loosened soil.\nStep 5 (Dry): Use a single-use paper towel or high-velocity HEPA electric air dryer.\nStep 6 (Turn Off Tap): Use a single-use paper towel to turn off the faucet and open doors to prevent re-contaminating clean hands."
       },
       {
         "id": "4",
@@ -2723,12 +2992,12 @@
       {
         "id": "6",
         "title": "6. Facility Infrastructure & Multilingual Signage",
-        "content": "Sinks must be completely unobstructed with zero physical barriers. Prominent eye-level \"Wash Hands\" signage must be posted in all primary languages spoken by staff, supplemented by visual diagrams illustrating the 20-second scrubbing technique."
+        "content": "Sinks must be completely unobstructed with zero physical barriers. Prominent eye-level \"Wash Hands\" signage must be posted in all primary languages spoken by staff, supplemented by visual diagrams illustrating the 40–60 second scrubbing technique."
       }
     ],
     "tables": [
       {
-        "title": "Six (6) Step Handwashing Protocol (20-Second Duration)",
+        "title": "Six (6) Step Handwashing Protocol (40–60 Second Duration)",
         "headers": [
           "Step",
           "Action",
@@ -2748,7 +3017,7 @@
           [
             "Step 3",
             "Scrub",
-            "Rub vigorously for 10s: backs of hands, wrists, between fingers, nails."
+            "Rub vigorously (40–60s total wash): backs of hands, wrists, between fingers, nails."
           ],
           [
             "Step 4",
@@ -2829,7 +3098,7 @@
       "Double Wash",
       "CCPs",
       "Antimicrobial Soap",
-      "20 Seconds"
+      "40-60 Seconds"
     ]
   },
   {
@@ -3584,7 +3853,7 @@
       {
         "id": "3",
         "title": "3. Jewelry & Mobile Electronics",
-        "content": "Jewelry: Bare below the elbows. Plain wedding band only. Facial piercings must be removed or covered with metal-detectable plaster.\nMobile Phones: Strictly prohibited in food areas. Returning from personal phone use requires complete 20-second handwashing."
+        "content": "Jewelry: Bare below the elbows. Plain wedding band only. Facial piercings must be removed or covered with metal-detectable plaster.\nMobile Phones: Strictly prohibited in food areas. Returning from personal phone use requires complete 40–60 second handwashing."
       },
       {
         "id": "4",
@@ -3777,7 +4046,7 @@
       "Sanitation Towels: Blue = FOH Dining; Yellow = Handwash Sinks; Green = BOH Kitchen; White = Clean Wares; Red = Restroom ONLY.",
       "Chronological Batching Sequence: Shift Start = Clean Run (allergen-free, RTE items, clean vegetables); Shift End = Raw/Allergen Run.",
       "Cooking Line Boundary: Line of demarcation. Line cooks must use entirely separate dedicated tongs & plates for raw protein placement versus cooked protein retrieval.",
-      "Hygienic Reset: 20-second handwashing + fresh gloves when switching tasks or food groups.",
+      "Hygienic Reset: 40–60 second handwashing + fresh gloves when switching tasks or food groups.",
       "Spill Response: Cordon off area immediately, deploy color-coded spill kit, wash/rinse/sanitize before resuming."
     ],
     "quickRules": [
@@ -3816,7 +4085,7 @@
       {
         "id": "4",
         "title": "4. Chronological Batching & Hygienic Reset",
-        "content": "Shift Start (Clean Run) processes allergen-free and RTE items. Shift End (Allergen/Raw Run) processes marinations. 20-second hygienic reset with fresh gloves required when switching tasks."
+        "content": "Shift Start (Clean Run) processes allergen-free and RTE items. Shift End (Allergen/Raw Run) processes marinations. 40–60 second hygienic reset with fresh gloves required when switching tasks."
       }
     ],
     "tables": [

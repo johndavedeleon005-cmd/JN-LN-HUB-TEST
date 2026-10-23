@@ -1,7 +1,7 @@
 import React from 'react';
-import { BookOpen, Zap, Headphones, CheckSquare, Sparkles } from 'lucide-react';
+import { BookOpen, Zap, Headphones, CheckSquare, Sparkles, Gamepad2 } from 'lucide-react';
 
-export type TabType = 'library' | 'quickref' | 'audio' | 'audit' | 'assistant';
+export type TabType = 'library' | 'quickref' | 'game' | 'audio' | 'audit' | 'assistant';
 
 interface AndroidBottomNavProps {
   activeTab: TabType;
@@ -14,7 +14,7 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
   activeTab,
   onTabChange,
   isPlayingAudio = false,
-  totalDocsCount = 33,
+  totalDocsCount = 34,
 }) => {
   const tabs = [
     {
@@ -29,6 +29,12 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
       icon: Zap,
     },
     {
+      id: 'game' as TabType,
+      label: '8-Bit Game',
+      icon: Gamepad2,
+      badge: 'NEW',
+    },
+    {
       id: 'audio' as TabType,
       label: 'Audio TTS',
       icon: Headphones,
@@ -41,7 +47,7 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
     },
     {
       id: 'assistant' as TabType,
-      label: 'AI Ask',
+      label: 'L&D Virtual Support',
       icon: Sparkles,
       highlight: true,
     },
@@ -49,7 +55,7 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
 
   return (
     <nav className="sticky bottom-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 pb-safe shadow-2xl">
-      <div className="flex items-center justify-around px-2 py-1 max-w-lg mx-auto">
+      <div className="flex items-center justify-around px-1 py-1 max-w-2xl mx-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;
@@ -58,11 +64,11 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className="flex-1 py-1.5 flex flex-col items-center justify-center relative group active:scale-95 transition-transform"
+              className="flex-1 min-w-0 py-1.5 px-0.5 flex flex-col items-center justify-center relative group active:scale-95 transition-transform"
             >
               {/* Material 3 active pill indicator */}
               <div
-                className={`relative px-4 py-1 rounded-full transition-all duration-200 flex items-center justify-center ${
+                className={`relative px-3 py-1 rounded-full transition-all duration-200 flex items-center justify-center ${
                   isActive
                     ? 'bg-red-500/20 text-red-400 font-semibold shadow-inner'
                     : 'text-slate-400 hover:text-slate-200 group-hover:bg-slate-800/50'
@@ -87,7 +93,7 @@ export const AndroidBottomNav: React.FC<AndroidBottomNavProps> = ({
 
               {/* Label */}
               <span
-                className={`text-[11px] mt-0.5 tracking-tight transition-colors ${
+                className={`text-[10px] sm:text-[11px] mt-0.5 tracking-tight transition-colors whitespace-nowrap truncate max-w-full ${
                   isActive ? 'text-red-400 font-bold' : 'text-slate-400'
                 }`}
               >
